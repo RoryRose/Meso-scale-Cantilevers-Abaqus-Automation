@@ -22,7 +22,9 @@ import xyPlot
 import displayGroupOdbToolset as dgo
 import connectorBehavior
 #create model#                    
-s = mdb.models['Model-1'].ConstrainedSketch(name='__profile__', 
+Mdb()
+session.viewports['Viewport: 1'].setValues(displayedObject=None)
+s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', 
     sheetSize=0.005)
 g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
 #create sketch#
@@ -112,40 +114,40 @@ session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00405714,
     cameraPosition=(0.000859323, 0.000700032, 0.00471405), cameraTarget=(
     0.000859323, 0.000700032, 0))
 #extrude sketch#
-p = mdb.models['Model-1'].Part(name='Part-1', dimensionality=THREE_D, 
+p = mdb.models[ModelName].Part(name=PrtName, dimensionality=THREE_D, 
     type=DEFORMABLE_BODY)
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 
 p.BaseSolidExtrude(sketch=s, depth=t)
 s.unsetPrimaryObject()
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 session.viewports['Viewport: 1'].setValues(displayedObject=p)
-del mdb.models['Model-1'].sketches['__profile__']
+del mdb.models[ModelName].sketches['__profile__']
 #create partitions#
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 pickedCells = c.getSequenceFromMask(mask=('[#1 ]', ), )
 e, v1, d1 = p.edges, p.vertices, p.datums
 p.PartitionCellByPlanePointNormal(normal=e[10], cells=pickedCells, 
     point=p.InterestingPoint(edge=e[10], rule=MIDDLE))
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 pickedCells = c.getSequenceFromMask(mask=('[#3 ]', ), )
 e1, v2, d2 = p.edges, p.vertices, p.datums
 p.PartitionCellByPlanePointNormal(normal=e1[27], cells=pickedCells, 
     point=p.InterestingPoint(edge=e1[27], rule=MIDDLE))
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 pickedCells = c.getSequenceFromMask(mask=('[#9 ]', ), )
 e, v1, d1 = p.edges, p.vertices, p.datums
 p.PartitionCellByPlanePointNormal(normal=e[21], cells=pickedCells, 
     point=p.InterestingPoint(edge=e[41], rule=MIDDLE))
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 pickedCells = c.getSequenceFromMask(mask=('[#f ]', ), )
 f = p.faces
 p.PartitionCellByExtendFace(extendFace=f[31], cells=pickedCells)
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 pickedCells = c.getSequenceFromMask(mask=('[#a8 ]', ), )
 f1 = p.faces
@@ -155,55 +157,55 @@ session.viewports['Viewport: 1'].partDisplay.setValues(sectionAssignments=ON,
 session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
     referenceRepresentation=OFF)
 #assign material#
-mdb.models['Model-1'].Material(name='Material-1')
-mdb.models['Model-1'].materials['Material-1'].Density(table=((dens, ), ))
-mdb.models['Model-1'].materials['Material-1'].Elastic(table=((E, 
+mdb.models[ModelName].Material(name='Material-1')
+mdb.models[ModelName].materials['Material-1'].Density(table=((dens, ), ))
+mdb.models[ModelName].materials['Material-1'].Elastic(table=((E, 
     PRat), ))
 #section part#
-mdb.models['Model-1'].HomogeneousSolidSection(name='Section-1', 
+mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
     material='Material-1', thickness=None)
-del mdb.models['Model-1'].sections['Section-1']
-mdb.models['Model-1'].HomogeneousSolidSection(name='Section-1', 
+del mdb.models[ModelName].sections['Section-1']
+mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
     material='Material-1', thickness=None)
-a = mdb.models['Model-1'].rootAssembly
+a = mdb.models[ModelName].rootAssembly
 session.viewports['Viewport: 1'].setValues(displayedObject=a)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(
     optimizationTasks=OFF, geometricRestrictions=OFF, stopConditions=OFF)
 #create assembly#
-a = mdb.models['Model-1'].rootAssembly
+a = mdb.models[ModelName].rootAssembly
 a.DatumCsysByDefault(CARTESIAN)
-p = mdb.models['Model-1'].parts['Part-1']
-a.Instance(name='Part-1-1', part=p, dependent=ON)
+p = mdb.models[ModelName].parts[PrtName]
+a.Instance(name=InstName, part=p, dependent=ON)
 session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00449812, 
     farPlane=0.00733091, width=0.00257805, height=0.00212468, 
     cameraPosition=(-0.0037457, 0.00262778, 0.00409448), cameraUpVector=(
     -0.17802, 0.407271, -0.895789), cameraTarget=(-0.000287169, 
     3.21561e-005, 1.49071e-005))
 #create useful sets#
-a = mdb.models['Model-1'].rootAssembly
-f1 = a.instances['Part-1-1'].faces
+a = mdb.models[ModelName].rootAssembly
+f1 = a.instances[InstName].faces
 faces1 = f1.getSequenceFromMask(mask=('[#0 #1004 ]', ), )
 a.Set(faces=faces1, name=EncName)
-a = mdb.models['Model-1'].rootAssembly
-v1 = a.instances['Part-1-1'].vertices
+a = mdb.models[ModelName].rootAssembly
+v1 = a.instances[InstName].vertices
 verts1 = v1.getSequenceFromMask(mask=('[#8000000 ]', ), )
 a.Set(vertices=verts1, name=CentFreeName)
-a = mdb.models['Model-1'].rootAssembly
-c1 = a.instances['Part-1-1'].cells
+a = mdb.models[ModelName].rootAssembly
+c1 = a.instances[InstName].cells
 cells1 = c1.getSequenceFromMask(mask=('[#3ff ]', ), )
 a.Set(cells=cells1, name='whole_prt')
-a = mdb.models['Model-1'].rootAssembly
-f1 = a.instances['Part-1-1'].faces
+a = mdb.models[ModelName].rootAssembly
+f1 = a.instances[InstName].faces
 faces1 = f1.getSequenceFromMask(mask=('[#50048 ]', ), )
 a.Set(faces=faces1, name=TopSetName)
-p1 = mdb.models['Model-1'].parts['Part-1']
+p1 = mdb.models[ModelName].parts[PrtName]
 session.viewports['Viewport: 1'].setValues(displayedObject=p1)
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 cells = c.getSequenceFromMask(mask=('[#3ff ]', ), )
 region = p.Set(cells=cells, name=WholePrt)
 #section part#
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
     offsetType=MIDDLE_SURFACE, offsetField='', 
     thicknessAssignment=FROM_SECTION)
@@ -212,14 +214,14 @@ session.viewports['Viewport: 1'].partDisplay.setValues(sectionAssignments=OFF,
     engineeringFeatures=OFF, mesh=ON)
 session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
     meshTechnique=ON)
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 p.seedPart(size=MeshSeedSize, deviationFactor=0.1, minSizeFactor=0.1)
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 p.generateMesh()
 elemType1 = mesh.ElemType(elemCode=C3D20R, elemLibrary=STANDARD)
 elemType2 = mesh.ElemType(elemCode=C3D15, elemLibrary=STANDARD)
 elemType3 = mesh.ElemType(elemCode=C3D10, elemLibrary=STANDARD)
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 cells = c.getSequenceFromMask(mask=('[#3ff ]', ), )
 pickedRegions =(cells, )

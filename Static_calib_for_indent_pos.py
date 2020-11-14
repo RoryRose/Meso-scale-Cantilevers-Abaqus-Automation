@@ -1,3 +1,9 @@
+# -*- coding: mbcs -*-
+# Do not delete the following import lines
+from abaqus import *
+from abaqusConstants import *
+import __main__
+#set names
 import section
 import regionToolset
 import displayGroupMdbToolset as dgm
@@ -15,17 +21,19 @@ import visualization
 import xyPlot
 import displayGroupOdbToolset as dgo
 import connectorBehavior
-p = mdb.models['Model-1'].parts['Part-1']
+#delete old mesh#
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 pickedRegions = c.getSequenceFromMask(mask=('[#3ff ]', ), )
 p.deleteMesh(regions=pickedRegions)
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
+#create new partitions#
 pickedCells = c.getSequenceFromMask(mask=('[#41 ]', ), )
 e, v, d = p.edges, p.vertices, p.datums
 p.PartitionCellByPlanePointNormal(normal=e[60], cells=pickedCells, 
     point=p.InterestingPoint(edge=e[60], rule=MIDDLE))
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 pickedCells = c.getSequenceFromMask(mask=('[#c00 ]', ), )
 e1, v1, d1 = p.edges, p.vertices, p.datums
@@ -36,18 +44,19 @@ session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
     meshTechnique=ON)
 session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
     referenceRepresentation=OFF)
-p = mdb.models['Model-1'].parts['Part-1']
+#generate new mesh#
+p = mdb.models[ModelName].parts[PrtName]
 p.generateMesh()
 elemType1 = mesh.ElemType(elemCode=C3D20R, elemLibrary=STANDARD)
 elemType2 = mesh.ElemType(elemCode=C3D15, elemLibrary=STANDARD)
 elemType3 = mesh.ElemType(elemCode=C3D10, elemLibrary=STANDARD)
-p = mdb.models['Model-1'].parts['Part-1']
+p = mdb.models[ModelName].parts[PrtName]
 c = p.cells
 cells = c.getSequenceFromMask(mask=('[#3fff ]', ), )
 pickedRegions =(cells, )
 p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
     elemType3))
-a = mdb.models['Model-1'].rootAssembly
+a = mdb.models[ModelName].rootAssembly
 a.regenerate()
 session.viewports['Viewport: 1'].setValues(displayedObject=a)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(
@@ -55,90 +64,94 @@ session.viewports['Viewport: 1'].assemblyDisplay.setValues(
 session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00469895, 
     farPlane=0.00712223, width=0.00188493, height=0.000775242, 
     viewOffsetX=0.000207475, viewOffsetY=-0.000125154)
-mdb.models['Model-1'].StaticStep(name='near_disk', previous='Initial')
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='near_disk')
-mdb.models['Model-1'].StaticStep(name='middle', previous='near_disk')
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='middle')
-mdb.models['Model-1'].StaticStep(name='end', previous='middle')
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='end')
-del mdb.models['Model-1'].fieldOutputRequests['F-Output-1']
-del mdb.models['Model-1'].historyOutputRequests['H-Output-1']
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='near_disk')
+#create steps#
+mdb.models[ModelName].StaticStep(name=SName2, previous='Initial')
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
+mdb.models[ModelName].StaticStep(name=SName, previous=SName2)
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
+mdb.models[ModelName].StaticStep(name=SName3, previous=SName)
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
+#delete automatically created output requests#
+del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
+del mdb.models[ModelName].historyOutputRequests['H-Output-1']
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
 session.viewports['Viewport: 1'].partDisplay.setValues(mesh=OFF)
 session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
     meshTechnique=OFF)
 session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
     referenceRepresentation=ON)
-p1 = mdb.models['Model-1'].parts['Part-1']
+p1 = mdb.models[ModelName].parts[PrtName]
 session.viewports['Viewport: 1'].setValues(displayedObject=p1)
-p = mdb.models['Model-1'].parts['Part-1']
+#create sets#
+p = mdb.models[ModelName].parts[PrtName]
 v = p.vertices
 verts = v.getSequenceFromMask(mask=('[#10000 ]', ), )
-p.Set(vertices=verts, name='near-disk-node')
-p = mdb.models['Model-1'].parts['Part-1']
+p.Set(vertices=verts, name=DiskFreeName)
+p = mdb.models[ModelName].parts[PrtName]
 v = p.vertices
 verts = v.getSequenceFromMask(mask=('[#1 ]', ), )
-p.Set(vertices=verts, name='near-end-node')
-a = mdb.models['Model-1'].rootAssembly
+p.Set(vertices=verts, name=EndFreeName)
+a = mdb.models[ModelName].rootAssembly
+#regenerate part#
 a.regenerate()
 session.viewports['Viewport: 1'].setValues(displayedObject=a)
-regionDef=mdb.models['Model-1'].rootAssembly.allInstances['Part-1-1'].sets['near-disk-node']
-mdb.models['Model-1'].HistoryOutputRequest(name='H-Output-1', 
-    createStepName='near_disk', variables=('U3', ), region=regionDef, 
+#create history output request#
+regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[DiskFreeName]
+mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', 
+    createStepName=SName2, variables=('U3', ), region=regionDef, 
     sectionPoints=DEFAULT, rebar=EXCLUDE)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='middle')
-regionDef=mdb.models['Model-1'].rootAssembly.sets['center_of_free_end']
-mdb.models['Model-1'].HistoryOutputRequest(name='H-Output-2', 
-    createStepName='middle', variables=('U3', ), region=regionDef, 
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
+regionDef=mdb.models[ModelName].rootAssembly.sets[CentFreeName]
+mdb.models[ModelName].HistoryOutputRequest(name='H-Output-2', 
+    createStepName=SName, variables=('U3', ), region=regionDef, 
     sectionPoints=DEFAULT, rebar=EXCLUDE)
-regionDef=mdb.models['Model-1'].rootAssembly.sets['center_of_free_end']
-mdb.models['Model-1'].HistoryOutputRequest(name='H-Output-3', 
-    createStepName='middle', variables=('U3', ), region=regionDef, 
-    sectionPoints=DEFAULT, rebar=EXCLUDE)
-del mdb.models['Model-1'].historyOutputRequests['H-Output-3']
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='end')
-regionDef=mdb.models['Model-1'].rootAssembly.allInstances['Part-1-1'].sets['near-end-node']
-mdb.models['Model-1'].HistoryOutputRequest(name='H-Output-3', 
-    createStepName='end', variables=('U3', ), region=regionDef, 
+regionDef=mdb.models[ModelName].rootAssembly.sets[EndFreeName]
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
+regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[EndFreeName]
+mdb.models[ModelName].HistoryOutputRequest(name='H-Output-3', 
+    createStepName=SName3, variables=('U3', ), region=regionDef, 
     sectionPoints=DEFAULT, rebar=EXCLUDE)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=ON, bcs=ON, 
     predefinedFields=ON, connectors=ON, adaptiveMeshConstraints=OFF)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='near_disk')
-a = mdb.models['Model-1'].rootAssembly
-region = a.instances['Part-1-1'].sets['near-disk-node']
-mdb.models['Model-1'].ConcentratedForce(name='Load-1', 
-    createStepName='near_disk', region=region, cf3=-1.0, 
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
+#create forces#
+a = mdb.models[ModelName].rootAssembly
+region = a.instances[InstName].sets[SName2]
+mdb.models[ModelName].ConcentratedForce(name='Load-1', 
+    createStepName=SName2, region=region, cf3=-1.0, 
     distributionType=UNIFORM, field='', localCsys=None)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='middle')
-a = mdb.models['Model-1'].rootAssembly
-region = a.sets['center_of_free_end']
-mdb.models['Model-1'].ConcentratedForce(name='Load-2', createStepName='middle', 
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
+a = mdb.models[ModelName].rootAssembly
+region = a.sets[CentFreeName]
+mdb.models[ModelName].ConcentratedForce(name='Load-2', createStepName=SName, 
     region=region, cf3=-1.0, distributionType=UNIFORM, field='', 
     localCsys=None)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='end')
-a = mdb.models['Model-1'].rootAssembly
-region = a.instances['Part-1-1'].sets['near-end-node']
-mdb.models['Model-1'].ConcentratedForce(name='Load-3', createStepName='end', 
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
+a = mdb.models[ModelName].rootAssembly
+region = a.instances[InstName].sets[EndFreeName]
+mdb.models[ModelName].ConcentratedForce(name='Load-3', createStepName=SName3, 
     region=region, cf3=-1.0, distributionType=UNIFORM, field='', 
     localCsys=None)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='near_disk')
-a = mdb.models['Model-1'].rootAssembly
-region = a.sets['encastre']
-mdb.models['Model-1'].EncastreBC(name='BC-1', createStepName='near_disk', 
+#create BC's#
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
+a = mdb.models[ModelName].rootAssembly
+region = a.sets[EncName]
+mdb.models[ModelName].EncastreBC(name='BC-1', createStepName=SName2, 
     region=region, localCsys=None)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='middle')
-a = mdb.models['Model-1'].rootAssembly
-region = a.sets['encastre']
-mdb.models['Model-1'].EncastreBC(name='BC-2', createStepName='middle', 
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
+a = mdb.models[ModelName].rootAssembly
+region = a.sets[EncName]
+mdb.models[ModelName].EncastreBC(name='BC-2', createStepName=SName, 
     region=region, localCsys=None)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step='end')
-a = mdb.models['Model-1'].rootAssembly
-region = a.sets['encastre']
-mdb.models['Model-1'].EncastreBC(name='BC-3', createStepName='end', 
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
+a = mdb.models[ModelName].rootAssembly
+region = a.sets[EncName]
+mdb.models[ModelName].EncastreBC(name='BC-3', createStepName=SName3, 
     region=region, localCsys=None)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=OFF, bcs=OFF, 
     predefinedFields=OFF, connectors=OFF)
-mdb.Job(name='Job-1', model='Model-1', description='', type=ANALYSIS, 
+#create job#
+mdb.Job(name=JobName, model=ModelName, description='', type=ANALYSIS, 
     atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90, 
     memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, 
     explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF, 

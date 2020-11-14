@@ -21,40 +21,43 @@ import visualization
 import xyPlot
 import displayGroupOdbToolset as dgo
 import connectorBehavior
+#regenerate model#
 a = mdb.models[ModelName].rootAssembly
 a.regenerate()
 session.viewports['Viewport: 1'].setValues(displayedObject=a)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(
     adaptiveMeshConstraints=ON)
 #create step#
-mdb.models[ModelName].StaticStep(name=SName, previous='Initial')
+mdb.models[ModelName].SteadyStateDirectStep(name=SName, previous='Initial', 
+    frequencyRange=((19000.0, 20000.0, 2, 1.0), ))
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
+#delete automatic history output request#
+del mdb.models[ModelName].historyOutputRequests['H-Output-1']
+#create field output requests#
+regionDef=mdb.models[ModelName].rootAssembly.sets[TopSetName]
+mdb.models[ModelName].fieldOutputRequests['F-Output-1'].setValues(variables=(
+    'S', 'LE', 'U', 'V', 'A'), region=regionDef, sectionPoints=DEFAULT, 
+    rebar=EXCLUDE)
+mdb.models[ModelName].FieldOutputRequest(name='F-Output-2', 
+    createStepName=SName, variables=('U', ))
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=ON, bcs=ON, 
     predefinedFields=ON, connectors=ON, adaptiveMeshConstraints=OFF)
-a = mdb.models[ModelName].rootAssembly
-#create force#
-region = a.sets[IndentLocName]
-mdb.models[ModelName].ConcentratedForce(name=ForceName, 
-    createStepName=SName, region=region, cf3=-1.0, 
-    distributionType=UNIFORM, field='', localCsys=None)
-a = mdb.models[ModelName].rootAssembly
 #create BCs#
+a = mdb.models[ModelName].rootAssembly
 region = a.sets[EncName]
-mdb.models[ModelName].EncastreBC(name='BC-1', createStepName=SName, 
-    region=region, localCsys=None)
+mdb.models[ModelName].DisplacementBC(name='BC-1', createStepName=SName, 
+    region=region, u1=0+0j, u2=0+0j, u3=UNSET, ur1=UNSET, ur2=UNSET, 
+    ur3=UNSET, amplitude=UNSET, fixed=OFF, distributionType=UNIFORM, 
+    fieldName='', localCsys=None)
+a = mdb.models[ModelName].rootAssembly
+region = a.sets[EncName]
+mdb.models[ModelName].DisplacementBC(name='BC-2', createStepName=SName, 
+    region=region, u1=UNSET, u2=UNSET, u3=1e-05+0j, ur1=UNSET, ur2=UNSET, 
+    ur3=UNSET, amplitude=UNSET, fixed=OFF, distributionType=UNIFORM, 
+    fieldName='', localCsys=None)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=OFF, bcs=OFF, 
-    predefinedFields=OFF, connectors=OFF, adaptiveMeshConstraints=ON)
-#delete auto-generated output requests#
-del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
-del mdb.models[ModelName].historyOutputRequests['H-Output-1']
-#create history output request for displacement at the nanoindenter#
-regionDef=mdb.models[ModelName].rootAssembly.sets[IndentLocName]
-mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', 
-    createStepName=SName, variables=('U3', ), region=regionDef, 
-    sectionPoints=DEFAULT, rebar=EXCLUDE)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(
-    adaptiveMeshConstraints=OFF)
-#create job#
+    predefinedFields=OFF, connectors=OFF)
+#create Job#
 mdb.Job(name=JobName, model=ModelName, description='', type=ANALYSIS, 
     atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90, 
     memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, 
