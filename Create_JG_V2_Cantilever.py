@@ -3,11 +3,23 @@
 from abaqus import *
 from abaqusConstants import *
 import __main__
-d1 = 0.3e-3 #length of cantilever between arc and end block
-d2 = 0.6e-3 #lenth of end block
-d3 = 0.6e-3 #length of cantilever between built in and free end
-h1 = 0.2e
-
+d1 = 0.3e-03 #length of cantilever between arc and end block
+d2 = 0.6e-03 #lenth of end block
+d3 = 0.6e-03 #length of cantilever between built in and free end
+d4 = 0.4E-03 #width of disk arc
+h1 = 0.2e-03 #width of cantilever
+h2 = 1.0e-03 #width of free end
+r1 = 0.9e-03 #radius of cantilever arc
+r2 = 2.0e-03 #radius of disc
+t =  125e-06 #thickness of sheet
+E = 200e+09 #material elastic modulus
+p = 8000 #material density
+PRat = 0.29 #material poissons ratio
+EncName = 'encastre' #name of encarcarate BC set
+TopSetName = 'Cant_top_set' #name of set for top of cantilever surface
+CentFreeName = 'center_of_free_end' #name of set for center of free end (nanoindent location)
+WholePrt = 'Whole-Part' #name of set for the whole part
+#set names
 import section
 import regionToolset
 import displayGroupMdbToolset as dgm
@@ -74,23 +86,20 @@ s.SymmetryConstraint(entity1=g[2], entity2=g[8], symmetryAxis=g[14])
 s.SymmetryConstraint(entity1=g[9], entity2=g[10], symmetryAxis=g[14])
 s.SymmetryConstraint(entity1=v[13], entity2=v[12], symmetryAxis=g[14])
 s.ObliqueDimension(vertex1=v[3], vertex2=v[4], textPoint=(0.0004, 
-    1.4e-05), value=0.001)
-s.ObliqueDimension(vertex1=v[4], vertex2=v[5], textPoint=(0.00015, 
-    -0.0005), value=6e-07)
-s.undo()
+    1.4e-05), value=h2)
 s.ObliqueDimension(vertex1=v[4], vertex2=v[5], textPoint=(0.00012, 
-    -0.0005), value=0.0006)
+    -0.0005), value=d2)
 s.DistanceDimension(entity1=g[2], entity2=g[8], textPoint=(
-    -0.00013, -3.4e-06), value=0.0002)
+    -0.00013, -3.4e-06), value=d1)
 s.DistanceDimension(entity1=g[11], entity2=g[3], textPoint=(6e-07, 0.0), 
-    value=0.0006)
+    value=d3)
 s.DistanceDimension(entity1=v[14], entity2=g[12], textPoint=(
-    -0.00068, -0.0002), value=0.0004)
+    -0.00068, -0.0002), value=d4)
 s.RadialDimension(curve=g[13], textPoint=(-0.0008, 
-    0.0007), radius=0.002)
+    0.0007), radius=r2)
 s.TangentConstraint(entity1=g[9], entity2=g[2])
 s.RadialDimension(curve=g[9], textPoint=(-0.0005, 
-    0.0003), radius=0.0018)
+    0.0003), radius=r1)
 s.dragEntity(entity=v[9], points=((-0.00106096395802383, 0.000567404644683332), 
     (-0.00105, 0.000575), (-0.0008, 0.000375), (-0.000625, 0.00025), (
     -0.00055, 0.000225)))
@@ -105,9 +114,9 @@ s.undo()
 s.undo()
 s.undo()
 s.ObliqueDimension(vertex1=v[0], vertex2=v[1], textPoint=(
-    -0.00037, 0.0003), value=0.0003)
+    -0.00037, 0.0003), value=d1)
 s.RadialDimension(curve=g[9], textPoint=(-0.0006, 
-    0.0004), radius=0.0009)
+    0.0004), radius=r1)
 s.dragEntity(entity=v[9], points=((-0.000970904952102452, 
     0.000316688240342015), (-0.000975, 0.000325), (-0.000775, 0.0002), (
     -0.000675, 0.00015), (-0.00065, 0.00015)))
@@ -123,7 +132,7 @@ p = mdb.models['Model-1'].Part(name='Part-1', dimensionality=THREE_D,
     type=DEFORMABLE_BODY)
 p = mdb.models['Model-1'].parts['Part-1']
 
-p.BaseSolidExtrude(sketch=s, depth=0.000125)
+p.BaseSolidExtrude(sketch=s, depth=t)
 s.unsetPrimaryObject()
 p = mdb.models['Model-1'].parts['Part-1']
 session.viewports['Viewport: 1'].setValues(displayedObject=p)
@@ -163,9 +172,9 @@ session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
     referenceRepresentation=OFF)
 #assign material#
 mdb.models['Model-1'].Material(name='Material-1')
-mdb.models['Model-1'].materials['Material-1'].Density(table=((8000.0, ), ))
-mdb.models['Model-1'].materials['Material-1'].Elastic(table=((200000000000.0, 
-    0.29), ))
+mdb.models['Model-1'].materials['Material-1'].Density(table=((p, ), ))
+mdb.models['Model-1'].materials['Material-1'].Elastic(table=((E, 
+    PRat), ))
 #section part#
 mdb.models['Model-1'].HomogeneousSolidSection(name='Section-1', 
     material='Material-1', thickness=None)
@@ -190,11 +199,11 @@ session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00449812,
 a = mdb.models['Model-1'].rootAssembly
 f1 = a.instances['Part-1-1'].faces
 faces1 = f1.getSequenceFromMask(mask=('[#0 #1004 ]', ), )
-a.Set(faces=faces1, name='encastre')
+a.Set(faces=faces1, name=EncName)
 a = mdb.models['Model-1'].rootAssembly
 v1 = a.instances['Part-1-1'].vertices
 verts1 = v1.getSequenceFromMask(mask=('[#8000000 ]', ), )
-a.Set(vertices=verts1, name='center of tongue')
+a.Set(vertices=verts1, name=CentFreeName)
 a = mdb.models['Model-1'].rootAssembly
 c1 = a.instances['Part-1-1'].cells
 cells1 = c1.getSequenceFromMask(mask=('[#3ff ]', ), )
@@ -202,13 +211,13 @@ a.Set(cells=cells1, name='whole_prt')
 a = mdb.models['Model-1'].rootAssembly
 f1 = a.instances['Part-1-1'].faces
 faces1 = f1.getSequenceFromMask(mask=('[#50048 ]', ), )
-a.Set(faces=faces1, name='Cant_top_set')
+a.Set(faces=faces1, name=TopSetName)
 p1 = mdb.models['Model-1'].parts['Part-1']
 session.viewports['Viewport: 1'].setValues(displayedObject=p1)
 p = mdb.models['Model-1'].parts['Part-1']
 c = p.cells
 cells = c.getSequenceFromMask(mask=('[#3ff ]', ), )
-region = p.Set(cells=cells, name='whole_prt')
+region = p.Set(cells=cells, name=WholePrt)
 #section part#
 p = mdb.models['Model-1'].parts['Part-1']
 p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
