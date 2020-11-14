@@ -3,7 +3,10 @@
 from abaqus import *
 from abaqusConstants import *
 import __main__
-
+d1 = 0.3e-3 #length of cantilever between arc and end block
+d2 = 0.6e-3 #lenth of end block
+d3 = 0.6e-3 #length of cantilever between built in and free end
+h1 = 0.2e
 
 import section
 import regionToolset
