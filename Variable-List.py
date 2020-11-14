@@ -27,3 +27,12 @@ IndentLocName = 'nanoindenter' #name of the set (not created here) for the nanoi
 ModelName = 'Model-1' #name of the model
 PrtName = 'Part-1' #Name of Part
 InstName ='Inst-1' #Name of Instance
+#only for direct dynamic analysis#
+MinFreq = 19000 #minimum frequency for the frequency step
+MaxFreq = 20000 #maximum frequency for the frequency step
+VertDisp = 1e-05 #vertical displacement of the built in end
+#only for static cantilever calibration#
+SName2 = 'disk' #name of loading step  with indent nearer the disk
+SName3 = 'end' #name of loading step with indent nearer the end
+DiskFreeName = 'near_disk' #name of set for the indent nearer the disk side of the tongue (quater of the way along and on center line)
+EndFreeName = 'near_end' #name ofset for the indent nearer the end side of the tongue (three quaters of the way along and on center line)

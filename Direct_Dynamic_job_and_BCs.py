@@ -29,7 +29,7 @@ session.viewports['Viewport: 1'].assemblyDisplay.setValues(
     adaptiveMeshConstraints=ON)
 #create step#
 mdb.models[ModelName].SteadyStateDirectStep(name=SName, previous='Initial', 
-    frequencyRange=((19000.0, 20000.0, 2, 1.0), ))
+    frequencyRange=((MinFreq, MaxFreq, 2, 1.0), ))
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
 #delete automatic history output request#
 del mdb.models[ModelName].historyOutputRequests['H-Output-1']
@@ -52,7 +52,7 @@ mdb.models[ModelName].DisplacementBC(name='BC-1', createStepName=SName,
 a = mdb.models[ModelName].rootAssembly
 region = a.sets[EncName]
 mdb.models[ModelName].DisplacementBC(name='BC-2', createStepName=SName, 
-    region=region, u1=UNSET, u2=UNSET, u3=1e-05+0j, ur1=UNSET, ur2=UNSET, 
+    region=region, u1=UNSET, u2=UNSET, u3=VertDisp+0j, ur1=UNSET, ur2=UNSET, 
     ur3=UNSET, amplitude=UNSET, fixed=OFF, distributionType=UNIFORM, 
     fieldName='', localCsys=None)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=OFF, bcs=OFF, 
