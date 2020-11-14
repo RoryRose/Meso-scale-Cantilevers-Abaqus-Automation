@@ -3,22 +3,6 @@
 from abaqus import *
 from abaqusConstants import *
 import __main__
-d1 = 0.3e-03 #length of cantilever between arc and end block
-d2 = 0.6e-03 #lenth of end block
-d3 = 0.6e-03 #length of cantilever between built in and free end
-d4 = 0.4E-03 #width of disk arc
-h1 = 0.2e-03 #width of cantilever
-h2 = 1.0e-03 #width of free end
-r1 = 0.9e-03 #radius of cantilever arc
-r2 = 2.0e-03 #radius of disc
-t =  125e-06 #thickness of sheet
-E = 200e+09 #material elastic modulus
-p = 8000 #material density
-PRat = 0.29 #material poissons ratio
-EncName = 'encastre' #name of encarcarate BC set
-TopSetName = 'Cant_top_set' #name of set for top of cantilever surface
-CentFreeName = 'center_of_free_end' #name of set for center of free end (nanoindent location)
-WholePrt = 'Whole-Part' #name of set for the whole part
 #set names
 import section
 import regionToolset
@@ -172,7 +156,7 @@ session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
     referenceRepresentation=OFF)
 #assign material#
 mdb.models['Model-1'].Material(name='Material-1')
-mdb.models['Model-1'].materials['Material-1'].Density(table=((p, ), ))
+mdb.models['Model-1'].materials['Material-1'].Density(table=((dens, ), ))
 mdb.models['Model-1'].materials['Material-1'].Elastic(table=((E, 
     PRat), ))
 #section part#
@@ -223,5 +207,22 @@ p = mdb.models['Model-1'].parts['Part-1']
 p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
     offsetType=MIDDLE_SURFACE, offsetField='', 
     thicknessAssignment=FROM_SECTION)
-
+#create mesh#
+session.viewports['Viewport: 1'].partDisplay.setValues(sectionAssignments=OFF, 
+    engineeringFeatures=OFF, mesh=ON)
+session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
+    meshTechnique=ON)
+p = mdb.models['Model-1'].parts['Part-1']
+p.seedPart(size=MeshSeedSize, deviationFactor=0.1, minSizeFactor=0.1)
+p = mdb.models['Model-1'].parts['Part-1']
+p.generateMesh()
+elemType1 = mesh.ElemType(elemCode=C3D20R, elemLibrary=STANDARD)
+elemType2 = mesh.ElemType(elemCode=C3D15, elemLibrary=STANDARD)
+elemType3 = mesh.ElemType(elemCode=C3D10, elemLibrary=STANDARD)
+p = mdb.models['Model-1'].parts['Part-1']
+c = p.cells
+cells = c.getSequenceFromMask(mask=('[#3ff ]', ), )
+pickedRegions =(cells, )
+p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
+    elemType3))
 
