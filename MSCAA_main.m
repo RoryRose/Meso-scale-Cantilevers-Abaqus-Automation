@@ -70,7 +70,7 @@ else
     end
 end
 
-fprintf('%s: Completed Questions section\n\n',mfilename);
+fprintf('%s: Completed Questions section\n%s\n',mfilename,DashLine);
 
 %% Job Creating
 
@@ -110,10 +110,10 @@ switch Method
         dos('abaqus cae noGUI=Eigenmode_Analysis_Job_and_BCs.py');
         
     case 'Debug_MCAA_main'
-        disp('Debug_MCAA_main method ran');
+        fprintf('%s: Method Debug_MCAA_main was chosen\n\n',mfilename);
 end
 
-fprintf('%s: Completed Job Creating section\n\n',mfilename);
+fprintf('%s: Completed Job Creating section\n%s\n',mfilename,DashLine);
 
 %% Job Running
 
@@ -128,7 +128,7 @@ else
 end
 fprintf('%s: Ran job = "%s"\n\n',mfilename,JobName);
 
-fprintf('%s: Completed Job Running section\n\n',mfilename);
+fprintf('%s: Completed Job Running section\n%s\n',mfilename,DashLine);
 
 %% Analysis
 
@@ -136,8 +136,9 @@ fprintf('%s: Starting Analysis section\n\n',mfilename);
 
 
 
-fprintf('%s: Completed Analysis section\n\n',mfilename);
+fprintf('%s: Completed Analysis section\n%s\n',mfilename,DashLine);
 
+fprintf('%s: Completed!!\n',mfilename);
 %% Functions
 
 function JobName = methodInitialise(Method)

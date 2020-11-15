@@ -20,7 +20,11 @@ function JobName = VarCreator4ABAQUS(DefaultOption)
     % This combines the filename and path name into one string.
     readFile = fullfile(path,file);
 
-    disp('VarCreator4ABAQUS: Fullfile name achieved...')
+    debugON = false;
+    
+    if debugON == true
+        disp('VarCreator4ABAQUS: Fullfile name achieved...');
+    end
     %% Main Body
     
     % dbstack() describes what functions are being called.
@@ -110,7 +114,7 @@ function JobName = VarCreator4ABAQUS(DefaultOption)
             copyfile(readFile, fullfile(path,'InputVarMacro.py'));
             JobName = cleanJobName(obtainJobName(readFile));
             fclose('all');
-            disp('VarCreator4ABAQUS: Saved as .py')
+            disp('VarCreator4ABAQUS: Saved as InputVarMacro.py')
             
         otherwise
             PopUp = errordlg('The variable "DefaultOption" must be either empty (i.e. ""), OR to preselect option it must be either "Excel" or "Default"!');
@@ -118,8 +122,8 @@ function JobName = VarCreator4ABAQUS(DefaultOption)
             return
     end
     
-    
-disp('VarCreator4ABAQUS: Complete!')
+fprintf('VarCreator4ABAQUS: Prep done for JobName ="%s"\n',JobName);
+fprintf('VarCreator4ABAQUS: Complete!\n\n')
 
 
 end
@@ -156,7 +160,10 @@ function newCode = tableWrite(readFile,variablesList)
        line = fgetl(fid);
     end
     fclose(fid);
-    disp('VarCreator4ABAQUS: File Accessed and Read...')
+    
+    if debugON == true
+        disp('VarCreator4ABAQUS: File Accessed and Read...');
+    end
 
     linesString_NEW = linesString;
 
@@ -192,7 +199,9 @@ function newCode = tableWrite(readFile,variablesList)
 
     clear linesString_NEW
 
-    disp('VarCreator4ABAQUS: Table written...')
+    if debugON == true
+        disp('VarCreator4ABAQUS: Table written...')
+    end
 end
 
 % The job of this function is to save the table as a txt and then converts
@@ -212,7 +221,7 @@ function SaveAsPy(newCode,path,SaveName)
     copyfile(TextFile, fullfile(tempDir, [tempFile, '.py'])); 
     fclose('all');
     delete(string(SaveNameTXT));
-    disp('VarCreator4ABAQUS: Saved as .py')
+    fprintf('VarCreator4ABAQUS: Saved as %s.py\n',tempFile);
 end
 
 function JobName = obtainJobName(readFile)
