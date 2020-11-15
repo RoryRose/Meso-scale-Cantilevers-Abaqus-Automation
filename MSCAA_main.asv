@@ -37,8 +37,6 @@ fprintf('Code was written with Matlab %s\nCurrent computer is running %s\n%s\n',
 
 %% Questions
 
-fprintf('%s: Started Questions section\n\n',mfilename);
-
 question = 'Perform parametric analysis?';
 Quest_PA = questdlg(question,'MSCAA_main: Parametric Analysis','Yes','No','No');
 clear question
@@ -69,12 +67,7 @@ else
             return
     end
 end
-
-fprintf('%s: Completed Questions section\n\n',mfilename);
-
 %% Job Creating
-
-fprintf('%s: Started Job Creating section\n\n',mfilename);
 
 % x12 = '10';
 % ve = '20';
@@ -90,7 +83,7 @@ fprintf('%s: Started Job Creating section\n\n',mfilename);
 
 % This prepares ABAQUS for the specific job based on what has been
 % specified for the sample.
-JobName = methodInitialise(Method);
+JobName = methodInitialise;
 
 switch Method
     case 'Standard Static'
@@ -113,11 +106,9 @@ switch Method
         disp('Debug_MCAA_main method ran');
 end
 
-fprintf('%s: Completed Job Creating section\n\n',mfilename);
-
 %% Job Running
 
-fprintf('%s: Starting Job Running section\n\n',mfilename);
+fprintf('%s: Starting job running section\n\n',mfilename,JobName);
 
 % This will run the job for this method
 CommandLineToRun = sprintf('abaqus job=%s',JobName);
@@ -127,32 +118,23 @@ else
     
 end
 fprintf('%s: Ran job = "%s"\n\n',mfilename,JobName);
-
-fprintf('%s: Completed Job Running section\n\n',mfilename);
-
 %% Analysis
-
-fprintf('%s: Starting Analysis section\n\n',mfilename);
-
+fprintf('%s: Starting analysis section\n\n',mfilename);
 
 
-fprintf('%s: Completed Analysis section\n\n',mfilename);
+
+
 
 %% Functions
 
-function JobName = methodInitialise(Method)
-
+function JobName = methodInitialise
         % Create InputVarMacro via VarCreator4ABAQUS function.
         JobName = VarCreator4ABAQUS();
-        
-        if strcmp(Method,'Debug_MCAA_main') == false
-            % Runs the InputVarMacro.py to initialise user input variables.
-            dos('abaqus cae noGUI=InputVarMacro.py');
-            % Runs the script to generate the assembly etc. This is shared for
-            % all methods.
-            dos('abaqus cae noGUI=Create_JG_V2_Cantilever.py');
-        end
-        
+        % Runs the InputVarMacro.py to initialise user input variables.
+        dos('abaqus cae noGUI=InputVarMacro.py');
+        % Runs the script to generate the assembly etc. This is shared for
+        % all methods.
+        dos('abaqus cae noGUI=Create_JG_V2_Cantilever.py');
 end
 
 
