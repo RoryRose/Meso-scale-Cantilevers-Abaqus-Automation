@@ -12,7 +12,7 @@
 %   by RJ Scales (called VariablesExcel).
 % - Type 'Do Nothing' to leave the original Python file
 
-function VarCreator4ABAQUS(DefaultOption)
+function JobName = VarCreator4ABAQUS(DefaultOption)
     %% Loading variable list python file
     % This gets a UI interface to load the variables list python file,
     % which can be run just by itself.
@@ -92,6 +92,7 @@ function VarCreator4ABAQUS(DefaultOption)
             
                 newCode = tableWrite(readFile,variablesList);
                 SaveAsPy(newCode,path,'InputVarMacro');
+                JobName = cleanJobName(variablesList(20));
 
         case 'Excel'
             disp('Working on loading an Excel file');
@@ -101,13 +102,15 @@ function VarCreator4ABAQUS(DefaultOption)
             variablesList = importfile(Excel_readFile);
             newCode = tableWrite(readFile,variablesList);
             SaveAsPy(newCode,path,'InputVarMacro');
+            JobName = cleanJobName(variablesList(20));
         
         case 'Do Nothing'
             % This just copies the original file but renames it.
             disp('Option "Do Nothing" was chosen, hence macro will be copied and resaved as "InputVarMacro.py"...')
-            copyfile(readFile, fullfile(path,'InputVarMacro.py')); 
+            copyfile(readFile, fullfile(path,'InputVarMacro.py'));
+            JobName = cleanJobName(obtainJobName(readFile));
             fclose('all');
-            disp('VarCreator4ABAQUS: Saved as .py')    
+            disp('VarCreator4ABAQUS: Saved as .py')
             
         otherwise
             PopUp = errordlg('The variable "DefaultOption" must be either empty (i.e. ""), OR to preselect option it must be either "Excel" or "Default"!');
@@ -210,6 +213,26 @@ function SaveAsPy(newCode,path,SaveName)
     fclose('all');
     delete(string(SaveNameTXT));
     disp('VarCreator4ABAQUS: Saved as .py')
+end
+
+function JobName = obtainJobName(readFile)
+    % Helped by the following URL to read the .py file.
+    % from https://uk.mathworks.com/matlabcentral/answers/417112-how-to-write-from-a-python-file-to-another-python-script-modify-the-new-python-script-and-save-it-i
+    fid = fopen(readFile, 'r');
+    line = fgetl(fid);
+    linesString = strings(0,1);
+    while(ischar(line))
+       linesString(end+1,1) = line;
+       line = fgetl(fid);
+    end
+    fclose(fid);
+    
+    JobName_row = split(linesString(20),' ',2);
+    JobName = JobName_row(3);
+end
+
+function JobName = cleanJobName(OldJobName)
+    JobName = strip(OldJobName,"'");
 end
 
 %% Interesting stuff
