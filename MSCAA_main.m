@@ -29,6 +29,10 @@ else
     return
 end
 
+feature('numcores');
+NumCores = feature('numcores');
+fprintf('\n');
+
 CodeMatlabVersion = 'R2020b';
 ComputerMatlabVersion = sprintf('R%s',version('-release'));
 str = '-'; %This is character vector, NOT a string
@@ -119,10 +123,21 @@ fprintf('%s: Completed Job Creating section\n%s\n',mfilename,DashLine);
 
 fprintf('%s: Starting Job Running section\n\n',mfilename);
 
+AssignednNumOfCores = str2double(inputdlg(sprintf('Type in the number of CPU cores you want to use (max = %d)',NumCores)));
+
+InteractiveON = true;
+if InteractiveON == true
+    IntactiveVal = 'interactive';
+else
+    IntactiveVal = '';
+end
+
 % This will run the job for this method
-CommandLineToRun = sprintf('abaqus job=%s',JobName);
+% % cmd_str = sprintf('abaqus job=%s',JobName);
+cmd_str = sprintf('abaqus job=%s input=%s.inp cpus=%d %s',JobName,JobName,AssignednNumOfCores,IntactiveVal);
+% cmd_str = ['abaqus job=', JobName, ' input=', JobName, '.inp', ' cpus=',2];
 if strcmp(Method,'Debug_MCAA_main') == false
-    dos(CommandLineToRun);
+    dos(cmd_str);
 else
     
 end
