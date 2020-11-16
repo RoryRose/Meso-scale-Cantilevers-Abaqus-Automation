@@ -22,19 +22,19 @@ import xyPlot
 import displayGroupOdbToolset as dgo
 import connectorBehavior
 #regenerate model#
-a = mdb.models[PrtName].rootAssembly
+a = mdb.models[ModelName].rootAssembly
 a.regenerate()
 session.viewports['Viewport: 1'].setValues(displayedObject=a)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(
     adaptiveMeshConstraints=ON)
 #create step#
-mdb.models['Model-1'].FrequencyStep(name=SName, previous='Initial', 
+mdb.models[ModelName].FrequencyStep(name=SName, previous='Initial', 
     numEigen=1)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SSName)
+session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=ON, bcs=ON, 
     predefinedFields=ON, connectors=ON, adaptiveMeshConstraints=OFF)
 #create BCs#
-a = mdb.models[PrtName].rootAssembly
+a = mdb.models[ModelName].rootAssembly
 region = a.sets[EncName]
 mdb.models[ModelName].EncastreBC(name='BC-1', createStepName=SName, 
     region=region, localCsys=None)

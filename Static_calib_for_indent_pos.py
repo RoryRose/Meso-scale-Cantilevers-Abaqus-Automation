@@ -71,9 +71,9 @@ mdb.models[ModelName].StaticStep(name=SName, previous=SName2)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
 mdb.models[ModelName].StaticStep(name=SName3, previous=SName)
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
-#delete automatically created output requests#
-del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
-del mdb.models[ModelName].historyOutputRequests['H-Output-1']
+##delete automatically created output requests#
+#del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
+#del mdb.models[ModelName].historyOutputRequests['H-Output-1']
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
 session.viewports['Viewport: 1'].partDisplay.setValues(mesh=OFF)
 session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
@@ -105,7 +105,7 @@ regionDef=mdb.models[ModelName].rootAssembly.sets[CentFreeName]
 mdb.models[ModelName].HistoryOutputRequest(name='H-Output-2', 
     createStepName=SName, variables=('U3', ), region=regionDef, 
     sectionPoints=DEFAULT, rebar=EXCLUDE)
-regionDef=mdb.models[ModelName].rootAssembly.sets[EndFreeName]
+regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[EndFreeName]
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
 regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[EndFreeName]
 mdb.models[ModelName].HistoryOutputRequest(name='H-Output-3', 
@@ -116,7 +116,7 @@ session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=ON, bcs=ON,
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
 #create forces#
 a = mdb.models[ModelName].rootAssembly
-region = a.instances[InstName].sets[SName2]
+region = a.instances[InstName].sets[DiskFreeName]
 mdb.models[ModelName].ConcentratedForce(name='Load-1', 
     createStepName=SName2, region=region, cf3=-1.0, 
     distributionType=UNIFORM, field='', localCsys=None)

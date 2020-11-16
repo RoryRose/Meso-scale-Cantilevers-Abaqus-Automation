@@ -33,7 +33,7 @@ session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=ON, bcs=ON,
     predefinedFields=ON, connectors=ON, adaptiveMeshConstraints=OFF)
 a = mdb.models[ModelName].rootAssembly
 #create force#
-region = a.sets[IndentLocName]
+region = a.sets[CentFreeName]
 mdb.models[ModelName].ConcentratedForce(name=ForceName, 
     createStepName=SName, region=region, cf3=-1.0, 
     distributionType=UNIFORM, field='', localCsys=None)
@@ -48,7 +48,7 @@ session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=OFF, bcs=OFF,
 del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
 del mdb.models[ModelName].historyOutputRequests['H-Output-1']
 #create history output request for displacement at the nanoindenter#
-regionDef=mdb.models[ModelName].rootAssembly.sets[IndentLocName]
+regionDef=mdb.models[ModelName].rootAssembly.sets[CentFreeName]
 mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', 
     createStepName=SName, variables=('U3', ), region=regionDef, 
     sectionPoints=DEFAULT, rebar=EXCLUDE)
