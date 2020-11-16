@@ -25,6 +25,21 @@ import connectorBehavior
 ## Importing User Variables ##
 
 import InputVarMacro
+InputVarMacro()
+
+# import csv
+# filename = 'VariablesCSV.csv'
+# with open(filename) as f:
+#     reader = csv.reader(f)
+#     header_row = next(reader)
+#     print(header_row)
+
+# import csv
+# with open('VariablesCSV.csv', newline='') as csvfile:
+#     reader = csv.DictReader(csvfile)
+#     for row in reader:
+#         print(row['first_name'], row['last_name'])
+
 
 
 ## Generating Model ##
