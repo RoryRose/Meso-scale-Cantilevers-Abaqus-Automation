@@ -6,7 +6,7 @@
 clear
 clc
 
-debugON = true;
+% debugON = true;
 
 fprintf('Running %s\n%s\n\n',mfilename,'Made by Robert J Scales & Rory Rose');
 
@@ -38,6 +38,18 @@ ComputerMatlabVersion = sprintf('R%s',version('-release'));
 str = '-'; %This is character vector, NOT a string
 DashLine = repelem(str,100);
 fprintf('Code was written with Matlab %s\nCurrent computer is running %s\n%s\n',CodeMatlabVersion,ComputerMatlabVersion,DashLine);
+
+%% Settings
+
+GUI_ON = true;
+    if GUI_ON == true
+        GUI_ON = 'script';
+    else
+        GUI_ON = 'noGUI';
+    end
+    
+
+
 
 %% Questions
 
@@ -94,24 +106,28 @@ fprintf('%s: Started Job Creating section\n\n',mfilename);
 
 % This prepares ABAQUS for the specific job based on what has been
 % specified for the sample.
-JobName = methodInitialise(Method);
+JobName = methodInitialise(Method,GUI_ON);
 
 switch Method
     case 'Standard Static'
         % This creates the job for Standard Static
-        dos('abaqus cae noGUI=Create_Static_anal_job_and_BCs.py');
+        rn_script = sprintf('abaqus cae %s=Create_Static_anal_job_and_BCs.py',GUI_ON);
+        dos(rn_script);
         
     case 'Calibration Static'
         % This creates the job for Calibration Static
-        dos('abaqus cae noGUI=Static_calib_for_indent_pos.py');
+        rn_script = sprintf('abaqus cae %s=Static_calib_for_indent_pos.py',GUI_ON);
+        dos(rn_script);
         
     case 'Direct Dynamic'
         % This creates the job for Direct Dynamic
-        dos('abaqus cae noGUI=Direct_Dynamic_job_and_BCs.py');
+        rn_script = sprintf('abaqus cae %s=Direct_Dynamic_job_and_BCs.py',GUI_ON);
+        dos(rn_script);
         
     case 'Resonant Frequency'
         % This creates the job for Direct Dynamic
-        dos('abaqus cae noGUI=Eigenmode_Analysis_Job_and_BCs.py');
+        rn_script = sprintf('abaqus cae %s=Eigenmode_Analysis_Job_and_BCs.py',GUI_ON);
+        dos(rn_script);
         
     case 'Debug_MCAA_main'
         fprintf('%s: Method Debug_MCAA_main was chosen\n\n',mfilename);
@@ -123,7 +139,8 @@ fprintf('%s: Completed Job Creating section\n%s\n',mfilename,DashLine);
 
 fprintf('%s: Starting Job Running section\n\n',mfilename);
 
-AssignednNumOfCores = str2double(inputdlg(sprintf('Type in the number of CPU cores you want to use (max = %d)',NumCores)));
+% AssignednNumOfCores = str2double(inputdlg(sprintf('Type in the number of CPU cores you want to use (max = %d)',NumCores)));
+AssignednNumOfCores = 1;
 
 InteractiveON = true;
 if InteractiveON == true
@@ -139,7 +156,7 @@ cmd_str = sprintf('abaqus job=%s input=%s.inp cpus=%d %s',JobName,JobName,Assign
 if strcmp(Method,'Debug_MCAA_main') == false
     dos(cmd_str);
 else
-    
+    fprintf('%s: DEBUG: would be running job = "%s"\n\n',mfilename,JobName);
 end
 fprintf('%s: Ran job = "%s"\n\n',mfilename,JobName);
 
@@ -153,20 +170,26 @@ fprintf('%s: Starting Analysis section\n\n',mfilename);
 
 fprintf('%s: Completed Analysis section\n%s\n',mfilename,DashLine);
 
+if strcmp(Method,'Debug_MCAA_main') == true
+    fprintf('%s: DEBUG: Was running in debug method\n\n',mfilename);
+end
+
 fprintf('%s: Completed!!\n',mfilename);
 %% Functions
 
-function JobName = methodInitialise(Method)
+function JobName = methodInitialise(Method,GUI_ON)
 
         % Create InputVarMacro via VarCreator4ABAQUS function.
         JobName = VarCreator4ABAQUS();
         
         if strcmp(Method,'Debug_MCAA_main') == false
             % Runs the InputVarMacro.py to initialise user input variables.
-            dos('abaqus cae noGUI=InputVarMacro.py');
+            rn_script = sprintf('abaqus cae %s=InputVarMacro.py',GUI_ON);
+            dos(rn_script);
             % Runs the script to generate the assembly etc. This is shared for
             % all methods.
-            dos('abaqus cae noGUI=Create_JG_V2_Cantilever.py');
+            rn_script = sprintf('abaqus cae %s=Create_JG_V2_Cantilever.py',GUI_ON);
+            dos(rn_script);
         end
         
 end
