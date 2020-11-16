@@ -1,3 +1,7 @@
+import os
+CodeWD = os.path.realpath()
+OriginalWD = os.getcwd()
+
 # -*- coding: mbcs -*-
 # Do not delete the following import lines
 from abaqus import *
@@ -23,8 +27,9 @@ import displayGroupOdbToolset as dgo
 import connectorBehavior
 
 ## Importing User Variables ##
-
+os.chdir(CodeWD)
 import InputVarMacro
+os.chdir(OriginalWD)
 InputVarMacro.InputVarMacro()
 
 # import csv
