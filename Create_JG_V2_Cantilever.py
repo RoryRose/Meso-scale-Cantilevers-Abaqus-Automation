@@ -86,19 +86,6 @@ s.RadialDimension(curve=g[13], textPoint=(-0.0008,
 s.TangentConstraint(entity1=g[9], entity2=g[2])
 s.RadialDimension(curve=g[9], textPoint=(-0.0005, 
     0.0003), radius=r1)
-s.dragEntity(entity=v[9], points=((-0.00106096395802383, 0.000567404644683332), 
-    (-0.00105, 0.000575), (-0.0008, 0.000375), (-0.000625, 0.00025), (
-    -0.00055, 0.000225)))
-s.dragEntity(entity=v[11], points=((-0.001136249659634, -0.000296156967864238), 
-    (-0.001125, -0.0003), (-0.000725, -0.000125), (-0.000575, -7.5e-05), (
-    -0.00055, -7.5e-05)))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00436022, 
-    farPlane=0.00506787, width=0.00263219, height=0.00225061, 
-    cameraPosition=(0.000328496, 0.000331514, 0.00471405), cameraTarget=(
-    0.000328496, 0.000331514, 0))
-s.undo()
-s.undo()
-s.undo()
 s.ObliqueDimension(vertex1=v[0], vertex2=v[1], textPoint=(
     -0.00037, 0.0003), value=d1)
 s.RadialDimension(curve=g[9], textPoint=(-0.0006, 
