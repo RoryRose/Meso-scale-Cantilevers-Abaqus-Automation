@@ -1,35 +1,28 @@
-# -*- coding: mbcs -*-
-# Do not delete the following import lines
-from abaqus import *
-from abaqusConstants import *
-import __main__
-#set names
-import section
-import regionToolset
-import displayGroupMdbToolset as dgm
-import part
-import material
-import assembly
-import step
-import interaction
-import load
-import mesh
-import optimization
-import job
-import sketch
-import visualization
-import xyPlot
-import displayGroupOdbToolset as dgo
-import connectorBehavior
+def Assembly_JG_V2_Cantilever(**args):
+    # -*- coding: mbcs -*-
+    # Do not delete the following import lines
+    from abaqus import *
+    from abaqusConstants import *
+    import __main__
+    #set names
+    import section
+    import regionToolset
+    import displayGroupMdbToolset as dgm
+    import part
+    import material
+    import assembly
+    import step
+    import interaction
+    import load
+    import mesh
+    import optimization
+    import job
+    import sketch
+    import visualization
+    import xyPlot
+    import displayGroupOdbToolset as dgo
+    import connectorBehavior
 
-def Assembly_JG_V2_Cantilever():
-    
-    #create model#                    
-    Mdb()
-    session.viewports['Viewport: 1'].setValues(displayedObject=None)
-    s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', 
-        sheetSize=0.005)
-    g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
     #create sketch#
     s.sketchOptions.setValues(decimalPlaces=4)
     s.setPrimaryObject(option=STANDALONE)

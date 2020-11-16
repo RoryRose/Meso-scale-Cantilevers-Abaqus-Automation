@@ -1,5 +1,5 @@
 import os
-CodeWD = os.path.realpath()
+CodeWD = 'Z:\RR\Meso-scale-Cantilevers-Abaqus-Automation'
 OriginalWD = os.getcwd()
 
 # -*- coding: mbcs -*-
@@ -45,12 +45,11 @@ InputVarMacro.InputVarMacro()
 #     for row in reader:
 #         print(row['first_name'], row['last_name'])
 
-
-
 ## Generating Model ##
-
+os.chdir(CodeWD)
 import Assembly_JG_V2_Cantilever
-Assembly_JG_V2_Cantilever.Assembly_JG_V2_Cantilever()
+os.chdir(OriginalWD)
+Assembly_JG_V2_Cantilever.Assembly_JG_V2_Cantilever(d1,d2,d3,d4,h1,h2,r1,r2,t,E,dens,PRat,EncName,TopSetName,CentFreeName,WholePrt,MeshSeedSize,SName,ForceName,JobName,IndentLocName,ModelName,PrtName,InstName,MinFreq,MaxFreq,VertDisp,SName2,SName3,DiskFreeName,EndFreeName)
 
 ## Method Specficic Step ##
 a = mdb.models[ModelName].rootAssembly
