@@ -25,7 +25,7 @@ import connectorBehavior
 ## Importing User Variables ##
 
 import InputVarMacro
-InputVarMacro()
+InputVarMacro.InputVarMacro()
 
 # import csv
 # filename = 'VariablesCSV.csv'
@@ -45,7 +45,7 @@ InputVarMacro()
 ## Generating Model ##
 
 import Assembly_JG_V2_Cantilever
-Assembly_JG_V2_Cantilever()
+Assembly_JG_V2_Cantilever.Assembly_JG_V2_Cantilever()
 
 ## Method Specficic Step ##
 a = mdb.models[ModelName].rootAssembly

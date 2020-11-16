@@ -197,4 +197,4 @@ end
 
 
 
-
+% dos('abaqus cae script=Create_Static_anal_job_and_BCs.py')
