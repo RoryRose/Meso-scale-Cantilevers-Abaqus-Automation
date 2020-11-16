@@ -21,6 +21,13 @@ import visualization
 import xyPlot
 import displayGroupOdbToolset as dgo
 import connectorBehavior
+
+## Importing User Variables ##
+
+## Generating Model ##
+
+
+## Method Specficic Step ##
 a = mdb.models[ModelName].rootAssembly
 a.regenerate()
 session.viewports['Viewport: 1'].setValues(displayedObject=a)
