@@ -6,7 +6,7 @@
 clear
 clc
 
-debugON = true;
+% debugON = true;
 
 fprintf('Running %s\n%s\n\n',mfilename,'Made by Robert J Scales & Rory Rose');
 
@@ -156,7 +156,7 @@ cmd_str = sprintf('abaqus job=%s input=%s.inp cpus=%d %s',JobName,JobName,Assign
 if strcmp(Method,'Debug_MCAA_main') == false
     dos(cmd_str);
 else
-    fprintf('%s: In debug mode, would be running job = "%s"\n\n',mfilename,JobName);
+    fprintf('%s: DEBUG: would be running job = "%s"\n\n',mfilename,JobName);
 end
 fprintf('%s: Ran job = "%s"\n\n',mfilename,JobName);
 
@@ -169,6 +169,10 @@ fprintf('%s: Starting Analysis section\n\n',mfilename);
 
 
 fprintf('%s: Completed Analysis section\n%s\n',mfilename,DashLine);
+
+if strcmp(Method,'Debug_MCAA_main') == true
+    fprintf('%s: DEBUG: Was running in debug method\n\n',mfilename);
+end
 
 fprintf('%s: Completed!!\n',mfilename);
 %% Functions
