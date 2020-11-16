@@ -74,9 +74,7 @@ EndFreeName = 'near_end' #name ofset for the indent nearer the end side of the t
 #     for row in reader:
 #         print(row['first_name'], row['last_name'])
 
-## Generating Model ##
-#create model#                    
-#Mdb()
+## Generating Model ##               
 session.viewports['Viewport: 1'].setValues(displayedObject=None)
 s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', 
     sheetSize=0.005)

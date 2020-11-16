@@ -46,5 +46,7 @@ mdb.Job(name=JobName, model=ModelName, description='', type=ANALYSIS,
     memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, 
     explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF, 
     modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='', 
-    scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=1, 
-    numGPUs=0)
+    scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=NumCPUs, 
+    numDomains=NumCPUs, numGPUs=0)
+#create inp file#
+mdb.jobs[JobName].writeInput(consistencyChecking=OFF)

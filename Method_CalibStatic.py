@@ -44,6 +44,31 @@ session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
     meshTechnique=ON)
 session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
     referenceRepresentation=OFF)
+#create undeformable material#
+mdb.models[ModelName].Material(name='Material-2')
+mdb.models[ModelName].materials['Material-2'].Density(table=((dens, ), ))
+mdb.models[ModelName].materials['Material-2'].Elastic(table=((2e+15, PRat), ))
+#delete old section assignment#
+del mdb.models[ModelName].parts[PrtName].sectionAssignments[0]
+#create new section assignment#
+mdb.models[ModelName].HomogeneousSolidSection(name='Section-2', 
+    material='Material-2', thickness=None)
+p = mdb.models[ModelName].parts[PrtName]
+c = p.cells
+cells = c.getSequenceFromMask(mask=('[#202f ]', ), )
+region = p.Set(cells=cells, name='Undeformable-mat')
+p = mdb.models[ModelName].parts[PrtName]
+p.SectionAssignment(region=region, sectionName='Section-2', offset=0.0, 
+    offsetType=MIDDLE_SURFACE, offsetField='', 
+    thicknessAssignment=FROM_SECTION)
+p = mdb.models[ModelName].parts[PrtName]
+c = p.cells
+cells = c.getSequenceFromMask(mask=('[#1fd0 ]', ), )
+region = p.Set(cells=cells, name='deformable-mat')
+p = mdb.models[ModelName].parts[PrtName]
+p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
+    offsetType=MIDDLE_SURFACE, offsetField='', 
+    thicknessAssignment=FROM_SECTION)
 #generate new mesh#
 p = mdb.models[ModelName].parts[PrtName]
 p.generateMesh()
@@ -56,6 +81,7 @@ cells = c.getSequenceFromMask(mask=('[#3fff ]', ), )
 pickedRegions =(cells, )
 p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
     elemType3))
+#create steps#
 a = mdb.models[ModelName].rootAssembly
 a.regenerate()
 session.viewports['Viewport: 1'].setValues(displayedObject=a)
@@ -64,7 +90,6 @@ session.viewports['Viewport: 1'].assemblyDisplay.setValues(
 session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00469895, 
     farPlane=0.00712223, width=0.00188493, height=0.000775242, 
     viewOffsetX=0.000207475, viewOffsetY=-0.000125154)
-#create steps#
 mdb.models[ModelName].StaticStep(name=SName2, previous='Initial')
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
 mdb.models[ModelName].StaticStep(name=SName, previous=SName2)
@@ -156,5 +181,7 @@ mdb.Job(name=JobName, model=ModelName, description='', type=ANALYSIS,
     memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, 
     explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF, 
     modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='', 
-    scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=1, 
-    numGPUs=0)
+    scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=NumCPUs, 
+    numDomains=NumCPUs, numGPUs=0)
+#create inp file#
+mdb.jobs[JobName].writeInput(consistencyChecking=OFF)
