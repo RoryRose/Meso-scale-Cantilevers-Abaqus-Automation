@@ -24,8 +24,13 @@ import connectorBehavior
 
 ## Importing User Variables ##
 
+import InputVarMacro
+
+
 ## Generating Model ##
 
+import Assembly_JG_V2_Cantilever
+Assembly_JG_V2_Cantilever()
 
 ## Method Specficic Step ##
 a = mdb.models[ModelName].rootAssembly
