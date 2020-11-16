@@ -43,9 +43,9 @@ fprintf('Code was written with Matlab %s\nCurrent computer is running %s\n%s\n',
 
 GUI_ON = true;
     if GUI_ON == true
-        Type = 'script';
+        GUI_ON = 'script';
     else
-        Type = 'noGUI';
+        GUI_ON = 'noGUI';
     end
     
 
