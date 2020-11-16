@@ -106,7 +106,7 @@ fprintf('%s: Started Job Creating section\n\n',mfilename);
 
 % This prepares ABAQUS for the specific job based on what has been
 % specified for the sample.
-JobName = methodInitialise(Method);
+JobName = methodInitialise(Method,GUI_ON);
 
 switch Method
     case 'Standard Static'
