@@ -35,7 +35,7 @@ function MSCAA_PythonScriptCombiner
                 PreTable(i,:) = linspace(answer(1),answer(2),NumOfTests);
             end
             StringPreTable = string(PreTable);
-            Lines_1_alt = Lines_1;
+            
 %             Lines_1 = MSCAA_PythonScript1Altering(Lines_1);
             fprintf('%s: Changed input variables\n',mfilename);
         case 'No'

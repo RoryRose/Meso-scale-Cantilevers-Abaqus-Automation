@@ -2,7 +2,7 @@
 % By Robert James Scales Nov 2020
 % This code is designed ...
 
-function OutputStringArray = MSCAA_PythonScript1Altering(InputStringArray)
+function OutputStringArray = MSCAA_PythonScript1Altering(InputStringArray,variablesList)
 %%
     debugON = false;
 
