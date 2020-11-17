@@ -112,28 +112,29 @@ fprintf('%s: Started Job Creating section\n\n',mfilename);
 JobName = methodInitialise(Method,GUI_ON);
 
 switch Method
-    case 'Standard Static'
-        % This creates the job for Standard Static
-        rn_script = sprintf('abaqus cae %s=Create_Static_anal_job_and_BCs.py',GUI_ON);
-        dos(rn_script);
-        
-    case 'Calibration Static'
-        % This creates the job for Calibration Static
-        rn_script = sprintf('abaqus cae %s=Static_calib_for_indent_pos.py',GUI_ON);
-        dos(rn_script);
-        
-    case 'Direct Dynamic'
-        % This creates the job for Direct Dynamic
-        rn_script = sprintf('abaqus cae %s=Direct_Dynamic_job_and_BCs.py',GUI_ON);
-        dos(rn_script);
-        
-    case 'Resonant Frequency'
-        % This creates the job for Direct Dynamic
-        rn_script = sprintf('abaqus cae %s=Eigenmode_Analysis_Job_and_BCs.py',GUI_ON);
-        dos(rn_script);
-        
+%     case 'Standard Static'
+%         % This creates the job for Standard Static
+% %         rn_script = sprintf('abaqus cae %s=Create_Static_anal_job_and_BCs.py',GUI_ON);
+% %         dos(rn_script);
+%         
+%     case 'Calibration Static'
+%         % This creates the job for Calibration Static
+%         rn_script = sprintf('abaqus cae %s=Static_calib_for_indent_pos.py',GUI_ON);
+%         dos(rn_script);
+%         
+%     case 'Direct Dynamic'
+%         % This creates the job for Direct Dynamic
+%         rn_script = sprintf('abaqus cae %s=Direct_Dynamic_job_and_BCs.py',GUI_ON);
+%         dos(rn_script);
+%         
+%     case 'Resonant Frequency'
+%         % This creates the job for Direct Dynamic
+%         rn_script = sprintf('abaqus cae %s=Eigenmode_Analysis_Job_and_BCs.py',GUI_ON);
+%         dos(rn_script);  
     case 'Debug_MCAA_main'
         fprintf('%s: Method Debug_MCAA_main was chosen\n\n',mfilename);
+    otherwise
+        MSCAA_PythonScriptCombiner
 end
 
 fprintf('%s: Completed Job Creating section\n%s\n',mfilename,DashLine);
