@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime
+# from datetime import datetime
 
 # from matplotlib import pyplot as plt
 
@@ -7,31 +7,35 @@ filename = 'VariablesCSV.csv'
 with open(filename) as f:
     reader = csv.reader(f)
     header_row = next(reader)
-    print(header_row)
+    NumOfColumns = len(header_row)
+    NumOfTests = int(NumOfColumns-1)
+    # print(NumOfTests)
 
-    # Get dates and high temperatures from this file.
-    variables, values = [], []
-    for row in reader:
-        print(row)
-        
-        current_var = row[0]
-        # variables.append(current_var)
-        
-        try:
-            current_value = float(row[1])
-            exec("%s = %f" % (current_var,current_value))
-        except ValueError:
-            current_value = row[1]
-            exec("%s = %s" % (current_var,current_value))
-        # values.append(current_value)
-        
-        try:
-            current_value = float(row[2])-float(row[1])
-            exec("%s = %f" % (f"current_var",current_value))
-        except ValueError:
-            current_value = row[1]
-            exec("%s = %s" % (current_var,current_value))
-        # values.append(current_value)
+for i in range(1,NumOfColumns):
+    print("\nData column = %d" % i)
+    with open(filename) as f:
+        reader = csv.reader(f)
+        variables, values = [], []
+        for row in reader:
+            # print(row)
+            
+            current_var = row[0]
+            print(current_var)
+            # variables.append(current_var)
+            
+            test_val = row[i]
+            print(test_val)
+            if len(test_val) > 0:
+                try:
+                    current_value = float(test_val)
+                    exec("%s = %f" % (current_var,current_value))
+                except ValueError:
+                    current_value = test_val
+                    exec("%s = %s" % (current_var,current_value))
+                # values.append(current_value)
+            else:
+                exec("%s = %s" % (current_var,''))
+                
         
     
         
