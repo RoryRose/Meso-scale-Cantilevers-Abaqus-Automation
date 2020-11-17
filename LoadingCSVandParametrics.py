@@ -25,6 +25,15 @@ with open(filename) as f:
             exec("%s = %s" % (current_var,current_value))
         # values.append(current_value)
         
+        try:
+            current_value = float(row[2])-float(row[1])
+            exec("%s = %f" % (f"current_var",current_value))
+        except ValueError:
+            current_value = row[1]
+            exec("%s = %s" % (current_var,current_value))
+        # values.append(current_value)
+        
+    
         
 # x='buffalo'    
 # exec("%s = %d" % (x,2))

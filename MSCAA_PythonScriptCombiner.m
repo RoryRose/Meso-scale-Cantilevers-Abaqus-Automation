@@ -35,7 +35,20 @@ function MSCAA_PythonScriptCombiner
                 PreTable(i,:) = linspace(answer(1),answer(2),NumOfTests);
             end
             StringPreTable = string(PreTable);
-            Lines_1_alt = Lines_1;
+            Lines_1_alt = strings(length(array_var),1+NumOfTests);
+            Lines_1_alt(:,1) = array_var(:);
+            for i = 1:NumOfTests
+                Lines_1_alt(:,i+1) = array_val(:);
+            end
+            for i = 1:length(indx)
+                fprintf('Working on for %s:',array_var(indx(i)));
+                prompt = {message1,message2};
+                dlgtitle = 'Input';
+                dims = [1 35];
+                definput = {char(array_val(indx(i))),char(array_val(indx(i)))};
+                answer = str2double(inputdlg(prompt,dlgtitle,dims,definput));
+                PreTable(i,:) = linspace(answer(1),answer(2),NumOfTests);
+            end
 %             Lines_1 = MSCAA_PythonScript1Altering(Lines_1);
             fprintf('%s: Changed input variables\n',mfilename);
         case 'No'
