@@ -21,12 +21,13 @@ import visualization
 import xyPlot
 import displayGroupOdbToolset as dgo
 import connectorBehavior
-#regenerate model#
-a = mdb.models[ModelName].rootAssembly
+#create sets for measuring angle#
+p = mdb.models['Model-1'].parts['Part-1']
+v = p.vertices
+verts = v.getSequenceFromMask(mask=('[#2 ]','[#0 #8 ]', ), )
+p.Set(vertices=verts, name='angle_measure')
+a = mdb.models['Model-1'].rootAssembly
 a.regenerate()
-session.viewports['Viewport: 1'].setValues(displayedObject=a)
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(
-    adaptiveMeshConstraints=ON)
 #create step#
 mdb.models[ModelName].SteadyStateDirectStep(name=SName, previous='Initial', 
     frequencyRange=((MinFreq, MaxFreq, 2, 1.0), ))
@@ -38,10 +39,10 @@ regionDef=mdb.models[ModelName].rootAssembly.sets[TopSetName]
 mdb.models[ModelName].fieldOutputRequests['F-Output-1'].setValues(variables=(
     'S', 'LE', 'U', 'V', 'A'), region=regionDef, sectionPoints=DEFAULT, 
     rebar=EXCLUDE)
-mdb.models[ModelName].FieldOutputRequest(name='F-Output-2', 
-    createStepName=SName, variables=('U', ))
-session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=ON, bcs=ON, 
-    predefinedFields=ON, connectors=ON, adaptiveMeshConstraints=OFF)
+regionDef=mdb.models['Model-1'].rootAssembly.allInstances['Inst-1'].sets['angle_measure']
+mdb.models['Model-1'].FieldOutputRequest(name='free_angle', 
+    createStepName='Direct_Dynamic', variables=('COORD', ), 
+    region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
 #create BCs#
 a = mdb.models[ModelName].rootAssembly
 region = a.sets[EncName]
@@ -63,5 +64,7 @@ mdb.Job(name=JobName, model=ModelName, description='', type=ANALYSIS,
     memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, 
     explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF, 
     modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='', 
-    scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=1, 
-    numGPUs=0)
+    scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=NumCPUs, 
+    numDomains=NumCPUs, numGPUs=0)
+#create inp file#
+mdb.jobs[JobName].writeInput(consistencyChecking=OFF)
