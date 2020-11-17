@@ -23,8 +23,10 @@ IndentLocName = 'nanoindenter' #name of the set (not created here) for the nanoi
 ModelName = 'Model-1' #name of the model
 PrtName = 'Part-1' #Name of Part
 InstName = 'Inst-1' #Name of Instance
-NumCPUs = 6 #Number of CPUs to use in the Job
+NumCPUs = 12 #Number of CPUs to use in the Job
 AbqFDir = r"C:\Users\trin3150\Documents\Abaqus\liltemp" #directory location for abaqus to use (best if local)
+ODBName = 'C:/Users/trin3150/Documents/Abaqus/liltemp/' 
+RPTName = 'calib_static'
 #Only for direct dynamic analysis#
 MinFreq = 19000 #minimum frequency for the frequency step
 MaxFreq = 20000 #maximum frequency for the frequency step
