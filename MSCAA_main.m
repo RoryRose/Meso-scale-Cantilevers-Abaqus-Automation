@@ -6,25 +6,22 @@
 clear
 clc
 
+CodeWD = cd;
+
 % debugON = true;
 
 fprintf('Running %s\n%s\n\n',mfilename,'Made by Robert J Scales & Rory Rose');
 
-if ispc
-    fprintf('%s is running on a Windows computer...\n\n',mfilename);
-    % Code to run on Windows platform
-elseif isunix
-    % Code to run on Linux platform
-    PopUp = helpdlg('Unfortunately Unix is currently not supported!');
-    waitfor(PopUp);
-    return
+if ispc || isunix
+    % Code to run on Windows platform or Code to run on Linux platform
+    fprintf('%s is running on a compatible OS...\n\n',mfilename);
 elseif ismac
     % Code to run on Mac platform
-    PopUp = helpdlg('Unfortunately Mac is currently not supported!');
+    PopUp = helpdlg('Unfortunately Mac OS is currently not supported!');
     waitfor(PopUp);
     return
 else
-    PopUp = helpdlg('Platform is not supported!');
+    PopUp = helpdlg('This operating system is not supported!');
     waitfor(PopUp);
     return
 end
@@ -40,18 +37,24 @@ DashLine = repelem(str,100);
 fprintf('Code was written with Matlab %s\nCurrent computer is running %s\n%s\n',CodeMatlabVersion,ComputerMatlabVersion,DashLine);
 
 %% Settings
+fprintf('%s: Started Settings section\n\n',mfilename);
 
-GUI_ON = true;
-    if GUI_ON == true
+question = 'Display results in ABAQUS whilst generating model?';
+Quest_GUI = questdlg(question,'MSCAA_main: GUI ON/OFF','Yes','No','No');
+clear question
+
+switch Quest_GUI
+    case 'Yes'
         GUI_ON = 'script';
-    else
+    otherwise
         GUI_ON = 'noGUI';
-    end
-    
+end
 
+% Dir_work_ABAQUS = uigetdir(CodeWD,'Select the working directory for ABAQUS');
 
+fprintf('%s: Completed Settings section\n%s\n',mfilename,DashLine);
 
-%% Questions
+%% Method Selection
 
 fprintf('%s: Started Questions section\n\n',mfilename);
 
