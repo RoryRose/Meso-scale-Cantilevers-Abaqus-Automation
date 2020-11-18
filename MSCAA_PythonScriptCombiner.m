@@ -17,9 +17,9 @@ function MSCAA_PythonScriptCombiner
     
 %% Importing Script_1
     Lines_1 = py2string('MSCAA_Script_1_Variables.py','r');
+    [array_var,array_val] = VarReader(Lines_1);
     switch Quest_PA
         case 'Yes'
-            [array_var,array_val] = VarReader(Lines_1);
             ListOfVars = array_var;
             [indx,~] = listdlg('ListString',ListOfVars,'PromptString','Select variables to change:','SelectionMode','multiple','Name','Parametric');
             NumOfTests = str2double(inputdlg('How many tests to perform?'));
@@ -40,20 +40,35 @@ function MSCAA_PythonScriptCombiner
             for i = 1:NumOfTests
                 Lines_1_alt(:,i+1) = array_val(:);
             end
+
             for i = 1:length(indx)
-                fprintf('Working on for %s:',array_var(indx(i)));
-                prompt = {message1,message2};
-                dlgtitle = 'Input';
-                dims = [1 35];
-                definput = {char(array_val(indx(i))),char(array_val(indx(i)))};
-                answer = str2double(inputdlg(prompt,dlgtitle,dims,definput));
-                PreTable(i,:) = linspace(answer(1),answer(2),NumOfTests);
+                fprintf('Working on for %s:\n',array_var(indx(i)));
+                Lines_1_alt(indx(i),2:NumOfTests+1) = StringPreTable(i,:);
             end
 %             Lines_1 = MSCAA_PythonScript1Altering(Lines_1);
             fprintf('%s: Changed input variables\n',mfilename);
         case 'No'
             fprintf('%s: Did not alter input variables\n',mfilename);
+            array_var_and_val = [array_var,array_val];
     end
+    
+    Lines_1_table = table(Lines_1_alt);
+    
+    
+    SaveName = 'VariablesCSVMatlab';
+    SaveFileName = sprintf('%s.csv',SaveName);
+    % Writes it as a .txt first
+    writetable(Lines_1_table, SaveFileName,'WriteVariableNames',0,'WriteRowNames',0,'QuoteStrings',0);
+
+    % Credit to the following URL for inspiring me.
+    % This creates a copy of the .txt file but changes the extension to ".py".
+    % https://uk.mathworks.com/matlabcentral/answers/514865-how-to-change-file-extension-via-matlab
+    TextFile = fullfile(path, SaveFileName);
+    [tempDir, tempFile] = fileparts(TextFile); 
+    copyfile(TextFile, fullfile(tempDir, [tempFile, '.py'])); 
+    fclose('all');
+    delete(string(SaveFileName));
+    fprintf('VarCreator4ABAQUS: Saved as %s.py\n',tempFile);
 
 %% Importing Script_2
     Lines_2 = py2string('MSCAA_Script_2_GenModel__JG_V2_Cantilever.py','r');
