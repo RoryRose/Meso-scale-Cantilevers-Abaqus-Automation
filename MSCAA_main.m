@@ -65,11 +65,13 @@ fprintf('%s: Completed Settings section\n%s\n',mfilename,DashLine);
 %% Main Bulk
 fprintf('%s: Started PythonScriptCombiner section\n\n',mfilename);
 
-MSCAA_PythonScriptCombiner
+ParametricCSVGenerator(NumCores)
 
 % Dir_work_ABAQUS = uigetdir(CodeWD,'Select the working directory for ABAQUS');
 
+%% Running of python script
 
+% insert system command over here
 
 
 fprintf('%s: Completed!!\n',mfilename);
