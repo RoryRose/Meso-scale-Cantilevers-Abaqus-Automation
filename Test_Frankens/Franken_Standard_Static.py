@@ -37,7 +37,7 @@ with open(filename) as f:
     NumOfTests = int(NumOfColumns-1)
     # print(NumOfTests)
 
-for i in range(1,NumOfTests+1):
+for i in range(1,NumOfTests):
     print("\nData column = %d" % i)
     with open(filename) as f:
         reader = csv.reader(f)
@@ -358,7 +358,7 @@ for i in range(1,NumOfTests+1):
     mdb.jobs[JobName].waitForCompletion()#mdb.jobs['Job'+str(d[i])].waitForCompletion()
     
     #create xy data#
-    a = mdb.models['Model-1'].rootAssembly
+    a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
     session.mdbData.summary()
     o3 = session.openOdb(

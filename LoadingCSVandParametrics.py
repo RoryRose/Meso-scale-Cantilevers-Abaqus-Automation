@@ -11,7 +11,7 @@ with open(filename) as f:
     NumOfTests = int(NumOfColumns-1)
     # print(NumOfTests)
 
-for i in range(1,NumOfTests+1):
+for i in range(1,NumOfTests):
     print("\nData column = %d" % i)
     with open(filename) as f:
         reader = csv.reader(f)
