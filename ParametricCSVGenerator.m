@@ -7,6 +7,7 @@ function ParametricCSVGenerator(NumCores)
     clear question
 
     % Need to make it load a .txt template file to use!
+    % uigetfile
     Lines_1 = py2string('Variable-List-txt.txt','r');
     [array_var,array_val] = VarReader(Lines_1);
     
