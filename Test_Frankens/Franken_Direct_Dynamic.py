@@ -355,21 +355,10 @@ for i in range(1,NumOfTests):
         name=ODBName+JobName+'.odb')
     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
     odb = session.odbs[JobName+'.odb']
-    session.writeFieldReport(fileName=RPTName+'stress-dist'+'.rpt', append=OFF, 
+    session.writeFieldReport(fileName=RPTName+'stress-dist-and-coord'+'.rpt', append=OFF, 
         sortItem='Node Label', odb=odb, step=0, frame=2, outputPosition=NODAL, 
         variable=(('COORD', NODAL), ('S', INTEGRATION_POINT, ((INVARIANT, 
         'Mises'), (COMPONENT, 'S11'), (COMPONENT, 'S22'), (COMPONENT, 'S33'), (
         COMPONENT, 'S12'), (COMPONENT, 'S13'), (COMPONENT, 'S23'), )), ), 
         numericForm=REAL)
-    session.xyDataListFromField(odb=odb, outputPosition=NODAL, variable=(('COORD', 
-        NODAL, ((COMPONENT, 'COOR1'), (COMPONENT, 'COOR2'), (COMPONENT, 
-        'COOR3'), )), ), numericForm=REAL, nodeSets=('INST-1.NEAR_DISK', 
-        'INST-1.NEAR_END', ))
-    x0 = session.xyDataObjects['COORD:COOR1 PI: INST-1 N: 3']
-    x1 = session.xyDataObjects['COORD:COOR1 PI: INST-1 N: 17']
-    x2 = session.xyDataObjects['COORD:COOR2 PI: INST-1 N: 3']
-    x3 = session.xyDataObjects['COORD:COOR2 PI: INST-1 N: 17']
-    x4 = session.xyDataObjects['COORD:COOR3 PI: INST-1 N: 3']
-    x5 = session.xyDataObjects['COORD:COOR3 PI: INST-1 N: 17']
-    session.writeXYReport(fileName=RPTName+'angle'+'.rpt', xyData=(x0, x1, x2, x3, x4, x5))
     time.sleep(5)

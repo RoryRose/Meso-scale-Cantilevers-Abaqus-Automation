@@ -208,9 +208,6 @@ for i in range(1,NumOfTests):
     #section part#
     mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
         material='Material-1', thickness=None)
-    del mdb.models[ModelName].sections['Section-1']
-    mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
-        material='Material-1', thickness=None)
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(
@@ -253,47 +250,6 @@ for i in range(1,NumOfTests):
     p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
         offsetType=MIDDLE_SURFACE, offsetField='', 
         thicknessAssignment=FROM_SECTION)
-    #create new partitions#
-    pickedCells = c.getSequenceFromMask(mask=('[#41 ]', ), )
-    e, v, d = p.edges, p.vertices, p.datums
-    p.PartitionCellByPlanePointNormal(normal=e[60], cells=pickedCells, 
-        point=p.InterestingPoint(edge=e[60], rule=MIDDLE))
-    p = mdb.models[ModelName].parts[PrtName]
-    c = p.cells
-    pickedCells = c.getSequenceFromMask(mask=('[#c00 ]', ), )
-    e1, v1, d1 = p.edges, p.vertices, p.datums
-    p.PartitionCellByPlanePointNormal(normal=e1[84], cells=pickedCells, 
-        point=p.InterestingPoint(edge=e1[84], rule=MIDDLE))
-    session.viewports['Viewport: 1'].partDisplay.setValues(mesh=ON)
-    session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
-        meshTechnique=ON)
-    session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
-        referenceRepresentation=OFF)
-    #create undeformable material#
-    mdb.models[ModelName].Material(name='Material-2')
-    mdb.models[ModelName].materials['Material-2'].Density(table=((dens, ), ))
-    mdb.models[ModelName].materials['Material-2'].Elastic(table=((2e+15, PRat), ))
-    #delete old section assignment#
-    del mdb.models[ModelName].parts[PrtName].sectionAssignments[0]
-    #create new section assignment#
-    mdb.models[ModelName].HomogeneousSolidSection(name='Section-2', 
-        material='Material-2', thickness=None)
-    p = mdb.models[ModelName].parts[PrtName]
-    c = p.cells
-    cells = c.getSequenceFromMask(mask=('[#202f ]', ), )
-    region = p.Set(cells=cells, name='Undeformable-mat')
-    p = mdb.models[ModelName].parts[PrtName]
-    p.SectionAssignment(region=region, sectionName='Section-2', offset=0.0, 
-        offsetType=MIDDLE_SURFACE, offsetField='', 
-        thicknessAssignment=FROM_SECTION)
-    p = mdb.models[ModelName].parts[PrtName]
-    c = p.cells
-    cells = c.getSequenceFromMask(mask=('[#1fd0 ]', ), )
-    region = p.Set(cells=cells, name='deformable-mat')
-    p = mdb.models[ModelName].parts[PrtName]
-    p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
-        offsetType=MIDDLE_SURFACE, offsetField='', 
-        thicknessAssignment=FROM_SECTION)
     #generate new mesh#
     p = mdb.models[ModelName].parts[PrtName]
     p.seedPart(size=MeshSeedSize, deviationFactor=0.1, minSizeFactor=0.1)
@@ -307,102 +263,17 @@ for i in range(1,NumOfTests):
     pickedRegions =(cells, )
     p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
         elemType3))
-    #create steps#
-    a = mdb.models[ModelName].rootAssembly
-    a.regenerate()
-    session.viewports['Viewport: 1'].setValues(displayedObject=a)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(
-        adaptiveMeshConstraints=ON)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00469895, 
-        farPlane=0.00712223, width=0.00188493, height=0.000775242, 
-        viewOffsetX=0.000207475, viewOffsetY=-0.000125154)
-    mdb.models[ModelName].StaticStep(name=SName2, previous='Initial')
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
-    mdb.models[ModelName].StaticStep(name=SName, previous=SName2)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
-    mdb.models[ModelName].StaticStep(name=SName3, previous=SName)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
-    ##delete automatically created output requests#
-    #del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
-    #del mdb.models[ModelName].historyOutputRequests['H-Output-1']
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
-    session.viewports['Viewport: 1'].partDisplay.setValues(mesh=OFF)
-    session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
-        meshTechnique=OFF)
-    session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
-        referenceRepresentation=ON)
-    p1 = mdb.models[ModelName].parts[PrtName]
-    session.viewports['Viewport: 1'].setValues(displayedObject=p1)
-    #create sets#
-    p = mdb.models[ModelName].parts[PrtName]
-    v = p.vertices
-    verts = v.getSequenceFromMask(mask=('[#10000 ]', ), )
-    p.Set(vertices=verts, name=DiskFreeName)
-    p = mdb.models[ModelName].parts[PrtName]
-    v = p.vertices
-    verts = v.getSequenceFromMask(mask=('[#1 ]', ), )
-    p.Set(vertices=verts, name=EndFreeName)
-    a = mdb.models[ModelName].rootAssembly
-    #regenerate part#
-    a.regenerate()
-    session.viewports['Viewport: 1'].setValues(displayedObject=a)
-    #create history output request#
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
-    regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[DiskFreeName]
-    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', 
-        createStepName=SName2, variables=('U3', ), region=regionDef, 
-        sectionPoints=DEFAULT, rebar=EXCLUDE)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
-    regionDef=mdb.models[ModelName].rootAssembly.sets[CentFreeName]
-    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-2', 
-        createStepName=SName, variables=('U3', ), region=regionDef, 
-        sectionPoints=DEFAULT, rebar=EXCLUDE)
-    regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[EndFreeName]
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
-    regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[EndFreeName]
-    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-3', 
-        createStepName=SName3, variables=('U3', ), region=regionDef, 
-        sectionPoints=DEFAULT, rebar=EXCLUDE)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=ON, bcs=ON, 
-        predefinedFields=ON, connectors=ON, adaptiveMeshConstraints=OFF)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
-    #create forces#
-    a = mdb.models[ModelName].rootAssembly
-    region = a.instances[InstName].sets[DiskFreeName]
-    mdb.models[ModelName].ConcentratedForce(name='Load-1', 
-        createStepName=SName2, region=region, cf3=-1.0, 
-        distributionType=UNIFORM, field='', localCsys=None)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
-    a = mdb.models[ModelName].rootAssembly
-    region = a.sets[CentFreeName]
-    mdb.models[ModelName].ConcentratedForce(name='Load-2', createStepName=SName, 
-        region=region, cf3=-1.0, distributionType=UNIFORM, field='', 
-        localCsys=None)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
-    a = mdb.models[ModelName].rootAssembly
-    region = a.instances[InstName].sets[EndFreeName]
-    mdb.models[ModelName].ConcentratedForce(name='Load-3', createStepName=SName3, 
-        region=region, cf3=-1.0, distributionType=UNIFORM, field='', 
-        localCsys=None)
-    #create BC's#
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
+    #create step#
+    mdb.models[ModelName].FrequencyStep(name=SName, previous='Initial', 
+        numEigen=1)
+    #create BCs#
     a = mdb.models[ModelName].rootAssembly
     region = a.sets[EncName]
-    mdb.models[ModelName].EncastreBC(name='BC-1', createStepName=SName2, 
-        region=region, localCsys=None)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
-    a = mdb.models[ModelName].rootAssembly
-    region = a.sets[EncName]
-    mdb.models[ModelName].EncastreBC(name='BC-2', createStepName=SName, 
-        region=region, localCsys=None)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
-    a = mdb.models[ModelName].rootAssembly
-    region = a.sets[EncName]
-    mdb.models[ModelName].EncastreBC(name='BC-3', createStepName=SName3, 
+    mdb.models[ModelName].EncastreBC(name='BC-1', createStepName=SName, 
         region=region, localCsys=None)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=OFF, bcs=OFF, 
         predefinedFields=OFF, connectors=OFF)
-    #create job#
+    #create Job#
     mdb.Job(name=JobName, model=ModelName, description='', type=ANALYSIS, 
         atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90, 
         memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, 
@@ -416,7 +287,6 @@ for i in range(1,NumOfTests):
     mdb.jobs[JobName].submit(consistencyChecking=OFF)#mdb.jobs['Job'+str(d[i])].submit(consistencyChecking=OFF)
     #wait for job to finish#
     mdb.jobs[JobName].waitForCompletion()#mdb.jobs['Job'+str(d[i])].waitForCompletion()
-    
     #create xy data#
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
@@ -425,18 +295,9 @@ for i in range(1,NumOfTests):
         name=ODBName+JobName+'.odb')
     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
     odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
-    xy0 = session.XYDataFromHistory(name='Data-1', odb=odb, 
-        outputVariableName='Spatial displacement: U3 at Node 3 in NSET NEAR_END', 
-        steps=(SName3, ), )
-    xy1 = session.XYDataFromHistory(name='Data-2', odb=odb, 
-        outputVariableName='Spatial displacement: U3 at Node 7 in NSET CENTER_OF_FREE_END', 
-        steps=(SName, ), )
-    xy2 = session.XYDataFromHistory(name='Data-3', odb=odb, 
-        outputVariableName='Spatial displacement: U3 at Node 17 in NSET NEAR_DISK', 
-        steps=(SName2, ), )
-    #create output .rpt file#
-    x0 = session.xyDataObjects['Data-1']
-    x1 = session.xyDataObjects['Data-2']
-    x2 = session.xyDataObjects['Data-3']
-    session.writeXYReport(fileName=RPTName+'.rpt', xyData=(x0, x1, x2))
-    time.sleep(5)
+    xy1 = session.XYDataFromHistory(name='Eigenfreq', odb=odb, 
+        outputVariableName='Eigenfrequency: EIGFREQ for Whole Model', steps=(
+        SName, ), )
+    x0 = session.xyDataObjects['Eigenfreq']
+    session.writeXYReport(fileName=RPTName, xyData=(x0))
+    time.sleep(2)
