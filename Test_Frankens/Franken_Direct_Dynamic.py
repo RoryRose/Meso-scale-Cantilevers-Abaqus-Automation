@@ -307,7 +307,7 @@ for i in range(1,NumOfTests):
     #create field output requests#
     regionDef=mdb.models[ModelName].rootAssembly.sets[TopSetName]
     mdb.models[ModelName].fieldOutputRequests['F-Output-1'].setValues(variables=(
-        'S', 'LE', 'U', 'V', 'A'), region=regionDef, sectionPoints=DEFAULT, 
+        'S', 'LE', 'U', 'V', 'A','COORD'), region=regionDef, sectionPoints=DEFAULT, 
         rebar=EXCLUDE)
     regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[DiskFreeName]
     mdb.models[ModelName].FieldOutputRequest(name='Disk_end_coord', 
