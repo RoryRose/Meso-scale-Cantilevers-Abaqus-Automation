@@ -11,7 +11,7 @@ with open(filename) as f:
     NumOfTests = int(NumOfColumns-1)
     # print(NumOfTests)
 
-for i in range(1,NumOfColumns):
+for i in range(1,NumOfTests+1):
     print("\nData column = %d" % i)
     with open(filename) as f:
         reader = csv.reader(f)
@@ -26,13 +26,16 @@ for i in range(1,NumOfColumns):
             test_val = row[i]
             print(test_val)
             if len(test_val) > 0:
-                try:
+                if isinstance(test_val, float):
                     current_value = float(test_val)
                     exec("%s = %f" % (current_var,current_value))
-                except ValueError:
+                elif isinstance(test_val, str):
                     current_value = test_val
                     exec("%s = %s" % (current_var,current_value))
-                # values.append(current_value)
+                    # values.append(current_value)
+                elif isinstance(test_val, int):
+                    current_value = test_val
+                    exec("%s = %d" % (current_var,current_value))                    
             else:
                 exec("%s = %s" % (current_var,''))
                 
