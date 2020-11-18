@@ -35,7 +35,9 @@ for i in range(1,NumOfTests+1):
                     # values.append(current_value)
                 elif isinstance(test_val, int):
                     current_value = test_val
-                    exec("%s = %d" % (current_var,current_value))                    
+                    exec("%s = %d" % (current_var,current_value))
+                else:
+                    exec("%s = %s" % (current_var,''))
             else:
                 exec("%s = %s" % (current_var,''))
                 
