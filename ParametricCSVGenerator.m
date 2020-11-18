@@ -6,6 +6,7 @@ function ParametricCSVGenerator(NumCores)
     Quest_PA = questdlg(question,'MSCAA_main: Parametric Analysis','Yes','No','No');
     clear question
 
+    % Need to make it load a .txt template file to use!
     Lines_1 = py2string('Variable-List-txt.txt','r');
     [array_var,array_val] = VarReader(Lines_1);
     
