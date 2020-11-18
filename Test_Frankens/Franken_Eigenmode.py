@@ -299,5 +299,5 @@ for i in range(1,NumOfTests):
         outputVariableName='Eigenfrequency: EIGFREQ for Whole Model', steps=(
         SName, ), )
     x0 = session.xyDataObjects['Eigenfreq']
-    session.writeXYReport(fileName=RPTName, xyData=(x0))
+    session.writeXYReport(fileName=RPTName+'.rpt', xyData=(x0))
     time.sleep(2)
