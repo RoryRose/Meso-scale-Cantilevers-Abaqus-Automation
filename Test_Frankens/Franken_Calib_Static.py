@@ -253,31 +253,6 @@ for i in range(1,NumOfTests+1):
     p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
         offsetType=MIDDLE_SURFACE, offsetField='', 
         thicknessAssignment=FROM_SECTION)
-    #create mesh#
-    session.viewports['Viewport: 1'].partDisplay.setValues(sectionAssignments=OFF, 
-        engineeringFeatures=OFF, mesh=ON)
-    session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
-        meshTechnique=ON)
-    p = mdb.models[ModelName].parts[PrtName]
-    p.seedPart(size=MeshSeedSize, deviationFactor=0.1, minSizeFactor=0.1)
-    p = mdb.models[ModelName].parts[PrtName]
-    p.generateMesh()
-    elemType1 = mesh.ElemType(elemCode=C3D20R, elemLibrary=STANDARD)
-    elemType2 = mesh.ElemType(elemCode=C3D15, elemLibrary=STANDARD)
-    elemType3 = mesh.ElemType(elemCode=C3D10, elemLibrary=STANDARD)
-    p = mdb.models[ModelName].parts[PrtName]
-    c = p.cells
-    cells = c.getSequenceFromMask(mask=('[#3ff ]', ), )
-    pickedRegions =(cells, )
-    p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
-        elemType3))
-    #delete old mesh#
-    p = mdb.models[ModelName].parts[PrtName]
-    c = p.cells
-    pickedRegions = c.getSequenceFromMask(mask=('[#3ff ]', ), )
-    p.deleteMesh(regions=pickedRegions)
-    p = mdb.models[ModelName].parts[PrtName]
-    c = p.cells
     #create new partitions#
     pickedCells = c.getSequenceFromMask(mask=('[#41 ]', ), )
     e, v, d = p.edges, p.vertices, p.datums
@@ -321,6 +296,7 @@ for i in range(1,NumOfTests+1):
         thicknessAssignment=FROM_SECTION)
     #generate new mesh#
     p = mdb.models[ModelName].parts[PrtName]
+    p.seedPart(size=MeshSeedSize, deviationFactor=0.1, minSizeFactor=0.1)
     p.generateMesh()
     elemType1 = mesh.ElemType(elemCode=C3D20R, elemLibrary=STANDARD)
     elemType2 = mesh.ElemType(elemCode=C3D15, elemLibrary=STANDARD)
@@ -440,7 +416,8 @@ for i in range(1,NumOfTests+1):
     mdb.jobs[JobName].submit(consistencyChecking=OFF)#mdb.jobs['Job'+str(d[i])].submit(consistencyChecking=OFF)
     #wait for job to finish#
     mdb.jobs[JobName].waitForCompletion()#mdb.jobs['Job'+str(d[i])].waitForCompletion()
-    #create output .rpt file#
+    
+    #create xy data#
     a = mdb.models['Model-1'].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
     session.mdbData.summary()
@@ -460,8 +437,9 @@ for i in range(1,NumOfTests+1):
         outputVariableName='Spatial displacement: U3 at Node 17 in NSET NEAR_DISK', 
         steps=(SName2, ), )
     c2 = session.Curve(xyData=xy2)
+    #create output .rpt file#
     x0 = session.xyDataObjects['Data-1']
     x1 = session.xyDataObjects['Data-2']
     x2 = session.xyDataObjects['Data-3']
     session.writeXYReport(fileName=RPTName+'.rpt', xyData=(x0, x1, x2))
-    time.sleep(5)
+    time.sleep(10)
