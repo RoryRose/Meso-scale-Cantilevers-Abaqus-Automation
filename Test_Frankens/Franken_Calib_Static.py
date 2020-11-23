@@ -153,6 +153,8 @@ for i in range(1,NumOfTests):
     s.dragEntity(entity=v[11], points=((-0.000897071345175977, 
         -0.000221790082393968), (-0.0009, -0.000225), (-0.000675, -0.00015), (
         -0.000625, -0.000125)))
+    s.EqualDistanceConstraint(entity1=v[8], entity2=v[0], midpoint=v[9])
+    s.EqualDistanceConstraint(entity1=v[10], entity2=v[7], midpoint=v[11])
     session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00405714, 
         farPlane=0.00537095, width=0.00431811, height=0.00369213, 
         cameraPosition=(0.000859323, 0.000700032, 0.00471405), cameraTarget=(
