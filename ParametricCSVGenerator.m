@@ -7,7 +7,10 @@ function ParametricCSVGenerator(NumCores)
     clear question
 
     % Need to make it load a .txt template file to use!
-    Lines_1 = py2string('Variable-List-txt.txt','r');
+    
+    [file, path] = uigetfile({'*.txt;*.py','txt or py file'},'Select the variables template txt or py file:');
+    filename = fullfile(path,file);
+    Lines_1 = py2string(filename,'r');
     [array_var,array_val] = VarReader(Lines_1);
     
     message0 = sprintf('Use X number of CPUs out of %d?',NumCores);
