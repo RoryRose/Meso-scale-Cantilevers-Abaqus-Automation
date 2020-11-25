@@ -286,39 +286,26 @@ for i in range(1,NumOfTests+1):
     mdb.models[ModelName].StaticStep(name=SName3, previous=SName)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
     ##delete automatically created output requests#
-    #del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
-    #del mdb.models[ModelName].historyOutputRequests['H-Output-1']
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
-    session.viewports['Viewport: 1'].partDisplay.setValues(mesh=OFF)
-    session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
-        meshTechnique=OFF)
-    session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
-        referenceRepresentation=ON)
+    del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
+    del mdb.models[ModelName].historyOutputRequests['H-Output-1']
     p1 = mdb.models[ModelName].parts[PrtName]
     session.viewports['Viewport: 1'].setValues(displayedObject=p1)
     #regenerate part#
     a.regenerate()
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
-    #create history output request#
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
-    regionDef=mdb.models[ModelName].rootAssembly.sets[DiskFreeName]
-    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', 
-        createStepName=SName2, variables=('U3', ), region=regionDef, 
-        sectionPoints=DEFAULT, rebar=EXCLUDE)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
+    #create field output requests#
     regionDef=mdb.models[ModelName].rootAssembly.sets[CentFreeName]
-    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-2', 
-        createStepName=SName, variables=('U3', ), region=regionDef, 
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-2', 
+        createStepName=SName, variables=('U', ), region=regionDef, 
+        sectionPoints=DEFAULT, rebar=EXCLUDE)
+    regionDef=mdb.models[ModelName].rootAssembly.sets[DiskFreeName]
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-1', 
+        createStepName=SName2, variables=('U', ), region=regionDef, 
         sectionPoints=DEFAULT, rebar=EXCLUDE)
     regionDef=mdb.models[ModelName].rootAssembly.sets[EndFreeName]
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
-    regionDef=mdb.models[ModelName].rootAssembly.sets[EndFreeName]
-    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-3', 
-        createStepName=SName3, variables=('U3', ), region=regionDef, 
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-3', 
+        createStepName=SName3, variables=('U', ), region=regionDef, 
         sectionPoints=DEFAULT, rebar=EXCLUDE)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=ON, bcs=ON, 
-        predefinedFields=ON, connectors=ON, adaptiveMeshConstraints=OFF)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
     #create forces#
     a = mdb.models[ModelName].rootAssembly
     region = a.sets[DiskFreeName]
@@ -364,7 +351,7 @@ for i in range(1,NumOfTests+1):
     mdb.jobs[JobName].submit(consistencyChecking=OFF)#mdb.jobs['Job'+str(d[i])].submit(consistencyChecking=OFF)
     #wait for job to finish#
     mdb.jobs[JobName].waitForCompletion()#mdb.jobs['Job'+str(d[i])].waitForCompletion()
-     
+    
     #create xy data#
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
@@ -375,8 +362,13 @@ for i in range(1,NumOfTests+1):
     odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
     
     #create output .rpt file#
-    session.writeFieldReport(fileName='rpt_calib_static_'+JobName+'.rpt', append=ON, 
+    session.writeFieldReport(fileName='rpt_std_static_'+JobName+'.rpt', append=ON, 
         sortItem='Node Label', odb=odb, step=0, frame=1, outputPosition=NODAL, 
         variable=(('U', NODAL, ((COMPONENT, 'U3'), )), ))
-    time.sleep(2)
-
+    session.writeFieldReport(fileName='rpt_std_static_'+JobName+'.rpt', append=ON, 
+        sortItem='Node Label', odb=odb, step=1, frame=1, outputPosition=NODAL, 
+        variable=(('U', NODAL, ((COMPONENT, 'U3'), )), ))
+    session.writeFieldReport(fileName='rpt_std_static_'+JobName+'.rpt', append=ON, 
+        sortItem='Node Label', odb=odb, step=2, frame=1, outputPosition=NODAL, 
+        variable=(('U', NODAL, ((COMPONENT, 'U3'), )), ))
+    time.sleep(2)    
