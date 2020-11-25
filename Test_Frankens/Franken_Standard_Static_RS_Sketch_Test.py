@@ -289,11 +289,13 @@ for i in range(1,NumOfTests):
     #regenerate part#
     a.regenerate()
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
-    #create history output request#
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
+    #delete auto requests#
+    del mdb.models[ModelName].historyOutputRequests['H-Output-1']
+    del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
+    #create field output request#
     regionDef=mdb.models[ModelName].rootAssembly.sets[CentFreeName]
-    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-2', 
-        createStepName=SName, variables=('U3', ), region=regionDef, 
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-1', 
+        createStepName='nanoindenter', variables=('U', ), region=regionDef, 
         sectionPoints=DEFAULT, rebar=EXCLUDE)
     #create forces#
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
@@ -333,12 +335,10 @@ for i in range(1,NumOfTests):
         name=ODBName+JobName+'.odb')
     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
     odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
-    xy1 = session.XYDataFromHistory(name='Data-1', odb=odb, 
-        outputVariableName='Spatial displacement: U3 at Node .. in NSET CENTER_OF_FREE_END', 
-        steps=(SName, ), )
-    c1 = session.Curve(xyData=xy1)
+    
     #create output .rpt file#
-    x0 = session.xyDataObjects['Data-1']
-    session.writeXYReport(fileName=RPTName+'.rpt', xyData=(x0))
+    session.writeFieldReport(fileName=RPTName+'.rpt', append=OFF, 
+        sortItem='Node Label', odb=odb, step=0, frame=1, outputPosition=NODAL, 
+        variable=(('U', NODAL, ((COMPONENT, 'U3'), )), ))
     time.sleep(2)
 #=============================================================================
