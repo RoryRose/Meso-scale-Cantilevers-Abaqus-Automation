@@ -92,34 +92,14 @@ for i in range(1,NumOfTests):
         -0.000199999946542084, 0.000299999978020786))
     s.HorizontalConstraint(entity=g[6], addUndoState=False)
     s.PerpendicularConstraint(entity1=g[5], entity2=g[6], addUndoState=False)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00432733, 
-        farPlane=0.00510076, width=0.0044371, height=0.00238451, 
-        cameraPosition=(0.000222518, -0.000264382, 0.00471405), cameraTarget=(
-        0.000222518, -0.000264382, 0))
     s.Line(point1=(-0.0006, 0.0005), point2=(-0.0006, 0.000900000050477684))
     s.VerticalConstraint(entity=g[7], addUndoState=False)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00446327, 
-        farPlane=0.00496482, width=0.00254243, height=0.00136631, 
-        cameraPosition=(0.000816576, -7.76535e-005, 0.00471405), cameraTarget=(
-        0.000816576, -7.76535e-005, 0))
     s.CoincidentConstraint(entity1=v[0], entity2=g[2])
     s.CoincidentConstraint(entity1=v[0], entity2=g[2])
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00430264, 
-        farPlane=0.00512545, width=0.00472032, height=0.00253671, 
-        cameraPosition=(0.00169525, -0.0002707, 0.00471405), cameraTarget=(
-        0.00169525, -0.0002707, 0))
     s.ArcByStartEndTangent(point1=(-0.000199999946542084, 0.000299999978020786), 
         point2=(-0.0006, 0.0005), entity=g[6])
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00418711, 
-        farPlane=0.00524098, width=0.00604588, height=0.00324907, 
-        cameraPosition=(0.00227586, -0.000336939, 0.00471405), cameraTarget=(
-        0.00227586, -0.000336939, 0))
     s.ObliqueDimension(vertex1=v[0], vertex2=v[1], textPoint=(0.00150307640433311, 
         0.000271040771622211), value=h2/2)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00418711, 
-        farPlane=0.00524098, width=0.00534214, height=0.00287088, 
-        cameraPosition=(0.0021428, -0.000269356, 0.00471405), cameraTarget=(
-        0.0021428, -0.000269356, 0))
     s.ObliqueDimension(vertex1=v[1], vertex2=v[2], textPoint=(0.000699343276210129, 
         0.000803338829427958), value=d2)
     session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00439284, 
@@ -130,33 +110,12 @@ for i in range(1,NumOfTests):
         0.000447663362137973, 0.000127766688819975), value=h1/2)
     s.ObliqueDimension(vertex1=v[3], vertex2=v[4], textPoint=(5.98803162574768e-05, 
         0.00025412073591724), value=d1)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00449064, 
-        farPlane=0.00493745, width=0.00226492, height=0.00121717, 
-        cameraPosition=(0.000547788, 0.00012291, 0.00471405), cameraTarget=(
-        0.000547788, 0.00012291, 0))
-    session.viewports['Viewport: 1'].view.setValues(cameraPosition=(0.000257903, 
-        0.000124375, 0.00471405), cameraTarget=(0.000257903, 0.000124375, 0))
     s.DistanceDimension(entity1=v[5], entity2=g[2], textPoint=(
         -0.000490404781885445, 3.7224919651635e-05), value=h3/2)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00451665, 
-        farPlane=0.00491145, width=0.00226492, height=0.00121717, 
-        cameraPosition=(0.000194848, 7.78864e-005, 0.00471405), cameraTarget=(
-        0.000194848, 7.78864e-005, 0))
     s.DistanceDimension(entity1=g[7], entity2=g[5], textPoint=(
         -0.000194330961676314, 0.0004374721320346), value=d3)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00449065, 
-        farPlane=0.00493745, width=0.00226492, height=0.00121717, 
-        cameraPosition=(0.0001934, 7.74268e-005, 0.00471405), cameraTarget=(
-        0.0001934, 7.74268e-005, 0))
     s.FixedConstraint(entity=v[5])
-    session.viewports['Viewport: 1'].view.setValues(width=0.00240949, 
-        height=0.00129486, cameraPosition=(0.000164645, 6.88886e-005, 
-        0.00471405), cameraTarget=(0.000164645, 6.88886e-005, 0))
     s.copyMirror(mirrorLine=g[2], objectList=(g[3], g[4], g[5], g[6], g[8], g[7]))
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00452849, 
-        farPlane=0.00489961, width=0.00212902, height=0.00114414, 
-        cameraPosition=(0.00011629, 6.14514e-005, 0.00471405), cameraTarget=(
-        0.00011629, 6.14514e-005, 0))
     s.delete(objectList=(c[27], ))
     session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00444508, 
         farPlane=0.00498302, width=0.00308612, height=0.00165849, 
@@ -164,27 +123,12 @@ for i in range(1,NumOfTests):
         0.000404486, -7.53105e-007, 0))
     s.Arc3Points(point1=(-0.000499999971191242, 0.000600000050477684), point2=(
         -0.000499999971191242, -0.000600000050477684), point3=(-0.000775, 0.0))
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0051597, 
-            farPlane=0.00523016, width=0.000231577, height=0.000150995, 
-            cameraPosition=(-0.000437469, 0.000592363, 0.00519493), cameraTarget=(
-            -0.000437469, 0.000592363, 0))
     s.CoincidentConstraint(entity1=v[16], entity2=v[6])
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00510653, 
-        farPlane=0.00528333, width=0.000581073, height=0.000378878, 
-        cameraPosition=(-0.000318599, -0.000388514, 0.00519493), cameraTarget=(
-        -0.000318599, -0.000388514, 0))
-    session.viewports['Viewport: 1'].view.setValues(cameraPosition=(-0.000324365, 
-        -0.000537245, 0.00519493), cameraTarget=(-0.000324365, -0.000537245, 
-        0))
     s.CoincidentConstraint(entity1=v[14], entity2=v[17])
     s.DistanceDimension(entity1=v[18], entity2=g[7], textPoint=(
             -0.000617911980953068, -6.11209543421865e-06), value=d4)
     s.RadialDimension(curve=g[15], textPoint=(-0.000789811310824007, 
         0.000176487024873495), radius=r2)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00493921, 
-        farPlane=0.0053339, width=0.00129724, height=0.000845841, 
-        cameraPosition=(-0.000360502, 6.41261e-006, 0.00513656), cameraTarget=(
-        -0.000360502, 6.41261e-006, 0))
     s.CoincidentConstraint(entity1=v[18], entity2=g[2])
     #extrude sketch#
     p = mdb.models[ModelName].Part(name=PrtName, dimensionality=THREE_D, 
@@ -202,48 +146,44 @@ for i in range(1,NumOfTests):
     mdb.models[ModelName].materials['Material-1'].Elastic(table=((E, 
         PRat), ))    
     #create partitions#
-    p1 = mdb.models[ModelName].parts['Part-1']
+    p1 = mdb.models[ModelName].parts[PrtName]
     session.viewports['Viewport: 1'].setValues(displayedObject=p1)
-    p = mdb.models[ModelName].parts['Part-1']
+    p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#1 ]', ), )
     e, v1, d1 = p.edges, p.vertices, p.datums
     p.PartitionCellByPlanePointNormal(normal=e[31], cells=pickedCells, 
         point=p.InterestingPoint(edge=e[31], rule=MIDDLE))
-    p = mdb.models[ModelName].parts['Part-1']
+    p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#1 ]', ), )
     e1, v2, d2 = p.edges, p.vertices, p.datums
     p.PartitionCellByPlanePointNormal(normal=e1[42], cells=pickedCells, 
         point=p.InterestingPoint(edge=e1[42], rule=MIDDLE))
-    p = mdb.models[ModelName].parts['Part-1']
+    p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#4 ]', ), )
     e, v1, d1 = p.edges, p.vertices, p.datums
     p.PartitionCellByPlanePointNormal(normal=e[17], cells=pickedCells, 
         point=p.InterestingPoint(edge=e[17], rule=MIDDLE))
-    p = mdb.models[ModelName].parts['Part-1']
+    p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#1 ]', ), )
     e1, v2, d2 = p.edges, p.vertices, p.datums
     p.PartitionCellByPlanePointNormal(normal=e1[39], cells=pickedCells, 
         point=p.InterestingPoint(edge=e1[59], rule=MIDDLE))
-    p = mdb.models[ModelName].parts['Part-1']
+    p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#1f ]', ), )
     e, v1, d1 = p.edges, p.vertices, p.datums
     p.PartitionCellByPlanePointNormal(point=v1[37], normal=e[54], 
         cells=pickedCells)
-    p = mdb.models[ModelName].parts['Part-1']
+    p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#300 ]', ), )
     f = p.faces
     p.PartitionCellByExtendFace(extendFace=f[45], cells=pickedCells)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00572693, 
-        farPlane=0.0103084, cameraPosition=(-0.00373022, 0.00404755, 
-        0.0059605), cameraUpVector=(0.0726494, 0.574408, -0.815339), 
-        cameraTarget=(-0.000203, -0.0001, 7.49999e-005))
-    p = mdb.models[ModelName].parts['Part-1']
+    p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#b8a ]', ), )
     f1 = p.faces
@@ -263,37 +203,36 @@ for i in range(1,NumOfTests):
     a.DatumCsysByDefault(CARTESIAN)
     p = mdb.models[ModelName].parts[PrtName]
     a.Instance(name=InstName, part=p, dependent=ON)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00449812, 
-        farPlane=0.00733091, width=0.00257805, height=0.00212468, 
-        cameraPosition=(-0.0037457, 0.00262778, 0.00409448), cameraUpVector=(
-        -0.17802, 0.407271, -0.895789), cameraTarget=(-0.000287169, 
-        3.21561e-005, 1.49071e-005))
-# =============================================================================
-#     #create useful sets#
-#     a = mdb.models[ModelName].rootAssembly
-#     f1 = a.instances[InstName].faces
-#     faces1 = f1.getSequenceFromMask(mask=('[#0 #1004 ]', ), )
-#     a.Set(faces=faces1, name=EncName)
-#     a = mdb.models[ModelName].rootAssembly
-#     v1 = a.instances[InstName].vertices
-#     verts1 = v1.getSequenceFromMask(mask=('[#8000000 ]', ), )
-#     a.Set(vertices=verts1, name=CentFreeName)
-#     a = mdb.models[ModelName].rootAssembly
-#     c1 = a.instances[InstName].cells
-#     cells1 = c1.getSequenceFromMask(mask=('[#3ff ]', ), )
-#     a.Set(cells=cells1, name='whole_prt')
-#     a = mdb.models[ModelName].rootAssembly
-#     f1 = a.instances[InstName].faces
-#     faces1 = f1.getSequenceFromMask(mask=('[#50048 ]', ), )
-#     a.Set(faces=faces1, name=TopSetName)
-#     p1 = mdb.models[ModelName].parts[PrtName]
-#     session.viewports['Viewport: 1'].setValues(displayedObject=p1)
-#     p = mdb.models[ModelName].parts[PrtName]
-#     c = p.cells
-#     cells = c.getSequenceFromMask(mask=('[#3ff ]', ), )
-#     region = p.Set(cells=cells, name=WholePrt)
-# =============================================================================
+    #create useful sets#
+    p1 = mdb.models[ModelName].parts[PrtName]
+    session.viewports['Viewport: 1'].setValues(displayedObject=p1)
+    p = mdb.models[ModelName].rootAssembly
+    f = p.instances[InstName].faces
+    faces = f.getSequenceFromMask(mask=('[#0 #4000004 ]', ), )
+    p.Set(faces=faces, name=EncName)
+    v = p.instances[InstName].vertices
+    verts = v.getSequenceFromMask(mask=('[#10000000 ]', ), )
+    p.Set(vertices=verts, name=CentFreeName)
+    c = p.instances[InstName].cells
+    cells = c.getSequenceFromMask(mask=('[#3fff ]', ), )
+    p.Set(cells=cells, name='whole_prt')
+    f = p.instances[InstName].faces
+    faces = f.getSequenceFromMask(mask=('[#210 #22 ]', ), )
+    p.Set(faces=faces, name=TopSetName)
+    v = p.instances[InstName].vertices
+    verts = v.getSequenceFromMask(mask=('[#80000000 ]', ), )
+    p.Set(vertices=verts, name=EndFreeName)
+    v = p.instances[InstName].vertices
+    verts = v.getSequenceFromMask(mask=('[#200 ]', ), )
+    p.Set(vertices=verts, name=DiskFreeName)
+    c = p.instances[InstName].cells
+    cells = c.getSequenceFromMask(mask=('[#1f80 ]', ), )
+    p.Set(cells=cells, name='undeformable')
+    cells = c.getSequenceFromMask(mask=('[#207f ]', ), )
+    p.Set(cells=cells, name='deformable')
+#=============================================================================
     #section part#
+    region = p.Set(cells=cells, name=WholePrt)
     p = mdb.models[ModelName].parts[PrtName]
     p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
         offsetType=MIDDLE_SURFACE, offsetField='', 
@@ -309,7 +248,7 @@ for i in range(1,NumOfTests):
         material='Material-2', thickness=None)
     p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
-    cells = c.getSequenceFromMask(mask=('[#202f ]', ), )
+    cells = c.getSequenceFromMask(mask=('[#1f80 ]', ), )
     region = p.Set(cells=cells, name='Undeformable-mat')
     p = mdb.models[ModelName].parts[PrtName]
     p.SectionAssignment(region=region, sectionName='Section-2', offset=0.0, 
@@ -317,7 +256,7 @@ for i in range(1,NumOfTests):
         thicknessAssignment=FROM_SECTION)
     p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
-    cells = c.getSequenceFromMask(mask=('[#1fd0 ]', ), )
+    cells = c.getSequenceFromMask(mask=('[#207f ]', ), )
     region = p.Set(cells=cells, name='deformable-mat')
     p = mdb.models[ModelName].parts[PrtName]
     p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
@@ -395,10 +334,11 @@ for i in range(1,NumOfTests):
     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
     odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
     xy1 = session.XYDataFromHistory(name='Data-1', odb=odb, 
-        outputVariableName='Spatial displacement: U3 at Node 7 in NSET CENTER_OF_FREE_END', 
+        outputVariableName='Spatial displacement: U3 at Node .. in NSET CENTER_OF_FREE_END', 
         steps=(SName, ), )
     c1 = session.Curve(xyData=xy1)
     #create output .rpt file#
     x0 = session.xyDataObjects['Data-1']
     session.writeXYReport(fileName=RPTName+'.rpt', xyData=(x0))
     time.sleep(2)
+#=============================================================================
