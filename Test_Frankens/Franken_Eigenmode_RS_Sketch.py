@@ -273,26 +273,24 @@ for i in range(1,NumOfTests+1):
         modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='', 
         scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=NumCPUs, 
         numDomains=NumCPUs, numGPUs=0)
-# =============================================================================
-#     #create inp file#
-#     mdb.jobs[JobName].writeInput(consistencyChecking=OFF)
-#     #run job#
-#     mdb.jobs[JobName].submit(consistencyChecking=OFF)
-#     #wait for job to finish#
-#     mdb.jobs[JobName].waitForCompletion()
-#     #create xy data#
-#     a = mdb.models[ModelName].rootAssembly
-#     session.viewports['Viewport: 1'].setValues(displayedObject=a)
-#     session.mdbData.summary()
-#     o3 = session.openOdb(
-#         name=ODBName+JobName+'.odb')
-#     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
-#     odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
-#     xy1 = session.XYDataFromHistory(name='Eigenfreq', odb=odb, 
-#         outputVariableName='Eigenfrequency: EIGFREQ for Whole Model', steps=(
-#         SName, ), )
-#     x0 = session.xyDataObjects['Eigenfreq']
-#     session.writeXYReport(fileName=RPTName+'.rpt', xyData=(x0))
-#     time.sleep(2)
-# =============================================================================
+    #create inp file#
+    mdb.jobs[JobName].writeInput(consistencyChecking=OFF)
+    #run job#
+    mdb.jobs[JobName].submit(consistencyChecking=OFF)
+    #wait for job to finish#
+    mdb.jobs[JobName].waitForCompletion()
+    #create xy data#
+    a = mdb.models[ModelName].rootAssembly
+    session.viewports['Viewport: 1'].setValues(displayedObject=a)
+    session.mdbData.summary()
+    o3 = session.openOdb(
+        name=ODBName+JobName+'.odb')
+    session.viewports['Viewport: 1'].setValues(displayedObject=o3)
+    odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
+    xy1 = session.XYDataFromHistory(name='Eigenfreq', odb=odb, 
+        outputVariableName='Eigenfrequency: EIGFREQ for Whole Model', steps=(
+        SName, ), )
+    x0 = session.xyDataObjects['Eigenfreq']
+    session.writeXYReport(fileName=RPTName+'.rpt', xyData=(x0))
+    time.sleep(2)
 
