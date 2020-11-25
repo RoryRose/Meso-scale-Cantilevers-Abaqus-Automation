@@ -310,7 +310,7 @@ for i in range(1,NumOfTests+1):
         name=ODBName+JobName+'.odb')
     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
     odb = session.odbs[JobName+'.odb']
-    session.writeFieldReport(fileName=RPTName+'stress-dist-and-coord'+'.rpt', append=OFF, 
+    session.writeFieldReport(fileName='rpt_direct_dynamic_'+JobName+'stress-dist-and-coord'+'.rpt', append=OFF, 
         sortItem='Node Label', odb=odb, step=0, frame=2, outputPosition=NODAL, 
         variable=(('COORD', NODAL), ('S', INTEGRATION_POINT, ((INVARIANT, 
         'Mises'), (COMPONENT, 'S11'), (COMPONENT, 'S22'), (COMPONENT, 'S33'), (

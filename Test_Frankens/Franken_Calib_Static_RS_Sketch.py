@@ -375,7 +375,7 @@ for i in range(1,NumOfTests+1):
     odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
     
     #create output .rpt file#
-    session.writeFieldReport(fileName=RPTName+'.rpt', append=OFF, 
+    session.writeFieldReport(fileName='rpt_calib_static_'+JobName+'.rpt', append=OFF, 
         sortItem='Node Label', odb=odb, step=0, frame=1, outputPosition=NODAL, 
         variable=(('U', NODAL, ((COMPONENT, 'U3'), )), ))
     time.sleep(2)
