@@ -37,7 +37,7 @@ with open(filename) as f:
     NumOfTests = int(NumOfColumns-1)
     # print(NumOfTests)
 
-for i in range(1,NumOfTests):
+for i in range(1,NumOfTests+1):
     print("\nData column = %d" % i)
     with open(filename) as f:
         reader = csv.reader(f)
@@ -265,12 +265,14 @@ for i in range(1,NumOfTests):
     #generate new mesh#
     p = mdb.models[ModelName].parts[PrtName]
     p.seedPart(size=MeshSeedSize, deviationFactor=0.1, minSizeFactor=0.1)
+    c = p.cells
+    pickedRegions = c.getSequenceFromMask(mask=('[#3fff ]', ), )
+    p.setMeshControls(regions=pickedRegions, algorithm=MEDIAL_AXIS)    
     p.generateMesh()
     elemType1 = mesh.ElemType(elemCode=C3D20R, elemLibrary=STANDARD)
     elemType2 = mesh.ElemType(elemCode=C3D15, elemLibrary=STANDARD)
     elemType3 = mesh.ElemType(elemCode=C3D10, elemLibrary=STANDARD)
-    p = mdb.models[ModelName].parts[PrtName]
-    c = p.cells
+
     cells = c.getSequenceFromMask(mask=('[#3fff ]', ), )
     pickedRegions =(cells, )
     p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
@@ -341,4 +343,4 @@ for i in range(1,NumOfTests):
         sortItem='Node Label', odb=odb, step=0, frame=1, outputPosition=NODAL, 
         variable=(('U', NODAL, ((COMPONENT, 'U3'), )), ))
     time.sleep(2)
-#=============================================================================
+
