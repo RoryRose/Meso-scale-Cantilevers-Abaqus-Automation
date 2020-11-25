@@ -231,18 +231,10 @@ for i in range(1,NumOfTests+1):
     cells = c.getSequenceFromMask(mask=('[#207f ]', ), )
     p.Set(cells=cells, name='deformable')
 #=============================================================================
-    #section part#
-    p = mdb.models[ModelName].parts[PrtName]
-    region = p.Set(cells=cells, name=WholePrt)
-    p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
-        offsetType=MIDDLE_SURFACE, offsetField='', 
-        thicknessAssignment=FROM_SECTION)
     #create undeformable material#
     mdb.models[ModelName].Material(name='Material-2')
     mdb.models[ModelName].materials['Material-2'].Density(table=((dens, ), ))
     mdb.models[ModelName].materials['Material-2'].Elastic(table=((2e+15, PRat), ))
-    #delete old section assignment#
-    del mdb.models[ModelName].parts[PrtName].sectionAssignments[0]
     #create new material#
     mdb.models[ModelName].HomogeneousSolidSection(name='Section-2', 
         material='Material-2', thickness=None)
@@ -287,31 +279,74 @@ for i in range(1,NumOfTests+1):
     session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00469895, 
         farPlane=0.00712223, width=0.00188493, height=0.000775242, 
         viewOffsetX=0.000207475, viewOffsetY=-0.000125154)
-    mdb.models[ModelName].StaticStep(name=SName, previous='Initial')
+    mdb.models[ModelName].StaticStep(name=SName2, previous='Initial')
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
+    mdb.models[ModelName].StaticStep(name=SName, previous=SName2)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
+    mdb.models[ModelName].StaticStep(name=SName3, previous=SName)
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
+    ##delete automatically created output requests#
+    #del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
+    #del mdb.models[ModelName].historyOutputRequests['H-Output-1']
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
+    session.viewports['Viewport: 1'].partDisplay.setValues(mesh=OFF)
+    session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
+        meshTechnique=OFF)
+    session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
+        referenceRepresentation=ON)
+    p1 = mdb.models[ModelName].parts[PrtName]
+    session.viewports['Viewport: 1'].setValues(displayedObject=p1)
     #regenerate part#
     a.regenerate()
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
-    #delete auto requests#
-    del mdb.models[ModelName].historyOutputRequests['H-Output-1']
-    del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
-    #create field output request#
-    regionDef=mdb.models[ModelName].rootAssembly.sets[CentFreeName]
-    mdb.models[ModelName].FieldOutputRequest(name='F-Output-1', 
-        createStepName='nanoindenter', variables=('U', ), region=regionDef, 
+    #create history output request#
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
+    regionDef=mdb.models[ModelName].rootAssembly.sets[DiskFreeName]
+    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', 
+        createStepName=SName2, variables=('U3', ), region=regionDef, 
         sectionPoints=DEFAULT, rebar=EXCLUDE)
-    #create forces#
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
+    regionDef=mdb.models[ModelName].rootAssembly.sets[CentFreeName]
+    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-2', 
+        createStepName=SName, variables=('U3', ), region=regionDef, 
+        sectionPoints=DEFAULT, rebar=EXCLUDE)
+    regionDef=mdb.models[ModelName].rootAssembly.sets[EndFreeName]
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
+    regionDef=mdb.models[ModelName].rootAssembly.sets[EndFreeName]
+    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-3', 
+        createStepName=SName3, variables=('U3', ), region=regionDef, 
+        sectionPoints=DEFAULT, rebar=EXCLUDE)
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=ON, bcs=ON, 
+        predefinedFields=ON, connectors=ON, adaptiveMeshConstraints=OFF)
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
+    #create forces#
     a = mdb.models[ModelName].rootAssembly
+    region = a.sets[DiskFreeName]
+    mdb.models[ModelName].ConcentratedForce(name='Load-1', 
+        createStepName=SName2, region=region, cf3=-1.0, 
+        distributionType=UNIFORM, field='', localCsys=None)
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
     region = a.sets[CentFreeName]
     mdb.models[ModelName].ConcentratedForce(name='Load-2', createStepName=SName, 
         region=region, cf3=-1.0, distributionType=UNIFORM, field='', 
         localCsys=None)
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
+    region = a.sets[EndFreeName]
+    mdb.models[ModelName].ConcentratedForce(name='Load-3', createStepName=SName3, 
+        region=region, cf3=-1.0, distributionType=UNIFORM, field='', 
+        localCsys=None)
+    #create BC's#
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
+    region = a.sets[EncName]
+    mdb.models[ModelName].EncastreBC(name='BC-1', createStepName=SName2, 
+        region=region, localCsys=None)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
-    #create BCs#
-    a = mdb.models[ModelName].rootAssembly
     region = a.sets[EncName]
     mdb.models[ModelName].EncastreBC(name='BC-2', createStepName=SName, 
+        region=region, localCsys=None)
+    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
+    region = a.sets[EncName]
+    mdb.models[ModelName].EncastreBC(name='BC-3', createStepName=SName3, 
         region=region, localCsys=None)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=OFF, bcs=OFF, 
         predefinedFields=OFF, connectors=OFF)
@@ -329,7 +364,7 @@ for i in range(1,NumOfTests+1):
     mdb.jobs[JobName].submit(consistencyChecking=OFF)#mdb.jobs['Job'+str(d[i])].submit(consistencyChecking=OFF)
     #wait for job to finish#
     mdb.jobs[JobName].waitForCompletion()#mdb.jobs['Job'+str(d[i])].waitForCompletion()
-    
+     
     #create xy data#
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
