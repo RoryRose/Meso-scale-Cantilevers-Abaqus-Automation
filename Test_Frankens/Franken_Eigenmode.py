@@ -210,9 +210,6 @@ for i in range(1,NumOfTests):
     #section part#
     mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
         material='Material-1', thickness=None)
-    del mdb.models[ModelName].sections['Section-1']
-    mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
-        material='Material-1', thickness=None)
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(
@@ -255,22 +252,6 @@ for i in range(1,NumOfTests):
     p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
         offsetType=MIDDLE_SURFACE, offsetField='', 
         thicknessAssignment=FROM_SECTION)
-    #create new partitions#
-    pickedCells = c.getSequenceFromMask(mask=('[#41 ]', ), )
-    e, v, d = p.edges, p.vertices, p.datums
-    p.PartitionCellByPlanePointNormal(normal=e[60], cells=pickedCells, 
-        point=p.InterestingPoint(edge=e[60], rule=MIDDLE))
-    p = mdb.models[ModelName].parts[PrtName]
-    c = p.cells
-    pickedCells = c.getSequenceFromMask(mask=('[#c00 ]', ), )
-    e1, v1, d1 = p.edges, p.vertices, p.datums
-    p.PartitionCellByPlanePointNormal(normal=e1[84], cells=pickedCells, 
-        point=p.InterestingPoint(edge=e1[84], rule=MIDDLE))
-    session.viewports['Viewport: 1'].partDisplay.setValues(mesh=ON)
-    session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
-        meshTechnique=ON)
-    session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
-        referenceRepresentation=OFF)
     #generate new mesh#
     p = mdb.models[ModelName].parts[PrtName]
     p.seedPart(size=MeshSeedSize, deviationFactor=0.1, minSizeFactor=0.1)
@@ -284,54 +265,14 @@ for i in range(1,NumOfTests):
     pickedRegions =(cells, )
     p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
         elemType3))
-    #create sets for measuring angle#
-    p = mdb.models[ModelName].parts[PrtName]
-    v = p.vertices
-    verts = v.getSequenceFromMask(mask=('[#2 ]','[#0 #8 ]', ), )
-    p.Set(vertices=verts, name='angle_measure')
-    a = mdb.models[ModelName].rootAssembly
-    a.regenerate()
-    p = mdb.models[ModelName].parts[PrtName]
-    v = p.vertices
-    verts = v.getSequenceFromMask(mask=('[#10000 ]', ), )
-    p.Set(vertices=verts, name=DiskFreeName)
-    p = mdb.models[ModelName].parts[PrtName]
-    v = p.vertices
-    verts = v.getSequenceFromMask(mask=('[#1 ]', ), )
-    p.Set(vertices=verts, name=EndFreeName)
-    a = mdb.models[ModelName].rootAssembly
     #create step#
-    mdb.models[ModelName].SteadyStateDirectStep(name=SName, previous='Initial', 
-        frequencyRange=((MinFreq, MaxFreq, 2, 1.0), ))
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
-    #delete automatic history output request#
-    del mdb.models[ModelName].historyOutputRequests['H-Output-1']
-    #create field output requests#
-    regionDef=mdb.models[ModelName].rootAssembly.sets[TopSetName]
-    mdb.models[ModelName].fieldOutputRequests['F-Output-1'].setValues(variables=(
-        'S', 'LE', 'U', 'V', 'A','COORD'), region=regionDef, sectionPoints=DEFAULT, 
-        rebar=EXCLUDE)
-    regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[DiskFreeName]
-    mdb.models[ModelName].FieldOutputRequest(name='Disk_end_coord', 
-        createStepName=SName, variables=('COORD', ), 
-        region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
-    regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstName].sets[EndFreeName]
-    mdb.models[ModelName].FieldOutputRequest(name='free_end_coord', 
-        createStepName=SName, variables=('COORD', ), 
-        region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
+    mdb.models[ModelName].FrequencyStep(name=SName, previous='Initial', 
+        numEigen=1)
     #create BCs#
     a = mdb.models[ModelName].rootAssembly
     region = a.sets[EncName]
-    mdb.models[ModelName].DisplacementBC(name='BC-1', createStepName=SName, 
-        region=region, u1=0+0j, u2=0+0j, u3=UNSET, ur1=UNSET, ur2=UNSET, 
-        ur3=UNSET, amplitude=UNSET, fixed=OFF, distributionType=UNIFORM, 
-        fieldName='', localCsys=None)
-    a = mdb.models[ModelName].rootAssembly
-    region = a.sets[EncName]
-    mdb.models[ModelName].DisplacementBC(name='BC-2', createStepName=SName, 
-        region=region, u1=UNSET, u2=UNSET, u3=VertDisp+0j, ur1=UNSET, ur2=UNSET, 
-        ur3=UNSET, amplitude=UNSET, fixed=OFF, distributionType=UNIFORM, 
-        fieldName='', localCsys=None)
+    mdb.models[ModelName].EncastreBC(name='BC-1', createStepName=SName, 
+        region=region, localCsys=None)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(loads=OFF, bcs=OFF, 
         predefinedFields=OFF, connectors=OFF)
     #create Job#
@@ -348,7 +289,6 @@ for i in range(1,NumOfTests):
     mdb.jobs[JobName].submit(consistencyChecking=OFF)#mdb.jobs['Job'+str(d[i])].submit(consistencyChecking=OFF)
     #wait for job to finish#
     mdb.jobs[JobName].waitForCompletion()#mdb.jobs['Job'+str(d[i])].waitForCompletion()
-    
     #create xy data#
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
@@ -356,11 +296,10 @@ for i in range(1,NumOfTests):
     o3 = session.openOdb(
         name=ODBName+JobName+'.odb')
     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
-    odb = session.odbs[JobName+'.odb']
-    session.writeFieldReport(fileName=RPTName+'stress-dist-and-coord'+'.rpt', append=OFF, 
-        sortItem='Node Label', odb=odb, step=0, frame=2, outputPosition=NODAL, 
-        variable=(('COORD', NODAL), ('S', INTEGRATION_POINT, ((INVARIANT, 
-        'Mises'), (COMPONENT, 'S11'), (COMPONENT, 'S22'), (COMPONENT, 'S33'), (
-        COMPONENT, 'S12'), (COMPONENT, 'S13'), (COMPONENT, 'S23'), )), ), 
-        numericForm=REAL)
-    time.sleep(5)
+    odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
+    xy1 = session.XYDataFromHistory(name='Eigenfreq', odb=odb, 
+        outputVariableName='Eigenfrequency: EIGFREQ for Whole Model', steps=(
+        SName, ), )
+    x0 = session.xyDataObjects['Eigenfreq']
+    session.writeXYReport(fileName=RPTName+'.rpt', xyData=(x0))
+    time.sleep(2)

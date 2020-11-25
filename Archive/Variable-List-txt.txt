@@ -25,7 +25,7 @@ PrtName = 'Part-1' #Name of Part
 InstName = 'Inst-1' #Name of Instance
 NumCPUs = 12 #Number of CPUs to use in the Job
 AbqFDir = r"C:\Users\trin3150\Documents\Abaqus\liltemp" #directory location for abaqus to use (best if local)
-ODBName = 'C:/Users/trin3150/Documents/Abaqus/liltemp/' 
+ODBName = 'C:/Users/trin3150/Documents/Abaqus/liltemp/' #directory where odb file is stored
 RPTName = 'calib_static'
 #Only for direct dynamic analysis#
 MinFreq = 19000 #minimum frequency for the frequency step

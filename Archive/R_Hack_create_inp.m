@@ -1,7 +1,7 @@
-%TEST ONLY
-% filename = 'nanoindent_calib';
-% pathname = 'C:\Users\trin3150\Documents\Abaqus\liltemp';
-% Create_inp_file
+% %TEST ONLY
+filename = 'nanoindent_calib';
+pathname = 'C:\Users\trin3150\Documents\Abaqus\liltemp';
+Create_inp_file
 %% Rory's Functions
 function Create_inp_file()
 %This is a hack of the Abaqus2Matlab GUI code for creating .inp files for
