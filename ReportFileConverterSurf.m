@@ -82,46 +82,63 @@ npts = length(x); % Number of points
 
 [~,IndXMax] = max(x);
 
-% [xg,yg] = meshgrid(linspace(MinXY,MaxXY,100));
-[xg,yg] = meshgrid(linspace(min(x),max(x),200),linspace(min(y),max(y),200));
-F = scatteredInterpolant(x,y,v);
-vg = F(xg,yg);
+ScatterORInt = 'Int'; % 'Int'
 
-b = boundary(x,y);
-inmask = inpolygon(xg(:),yg(:), x(b),y(b));
-vg(~inmask) = nan;
-xg_new = xg(~inmask);
-yg_new = yg(~inmask);
-% MinXY = min(min(x),min(y));
-% MaxXY = max(max(x),max(y));
-% [xg,yg] = meshgrid(linspace(MinXY,MaxXY,300));
-% F = scatteredInterpolant(x,y,v);
-% vg = F(xg,yg);
-h = pcolor(xg,yg,vg);
-h.EdgeColor = 'none';
-colorbar
-xlimvec = [min(xg(inmask)),max(xg(inmask))];
-ylimvec = [min(yg(inmask)),max(yg(inmask))];
-xlim(xlimvec);
-ylim(ylimvec);
+switch ScatterORInt
+    case 'Int'
+        % [xg,yg] = meshgrid(linspace(MinXY,MaxXY,100));
+        [xg,yg] = meshgrid(linspace(min(x),max(x),600),linspace(min(y),max(y),600));
+        F = scatteredInterpolant(x,y,v);
+        vg = F(xg,yg);
+
+        b = boundary(x,y);
+        inmask = inpolygon(xg(:),yg(:), x(b),y(b));
+        vg(~inmask) = nan;
+        xg_new = xg(~inmask);
+        yg_new = yg(~inmask);
+        % MinXY = min(min(x),min(y));
+        % MaxXY = max(max(x),max(y));
+        % [xg,yg] = meshgrid(linspace(MinXY,MaxXY,300));
+        % F = scatteredInterpolant(x,y,v);
+        % vg = F(xg,yg);
+        h = pcolor(xg,yg,vg);
+        h.EdgeColor = 'none';
+        c = colorbar;
+        xlimvec = [min(xg(inmask)),max(xg(inmask))];
+        ylimvec = [min(yg(inmask)),max(yg(inmask))];
+        xlim(xlimvec);
+        ylim(ylimvec);
 
 
-% dt = delaunayTriangulation(x,y);
-% [K,v] = convexHull(dt);
-% xp = x(K);
-% yp = y(K);
-% inmask = inpolygon(x(:),y(:), xp,yp);
-% v(~inmask) = nan;
-% % h = trisurf(dt.ConnectivityList,x,y,zeros(length(v),1),v);
-% h = trisurf(K,x,y,zeros(length(v),1),v);
-% h.FaceColor = 'interp';
-% % h.EdgeColor = 'none';
-% view(2)
-% colorbar
-hold on
-% plot(shp);
+        % dt = delaunayTriangulation(x,y);
+        % [K,v] = convexHull(dt);
+        % xp = x(K);
+        % yp = y(K);
+        % inmask = inpolygon(x(:),y(:), xp,yp);
+        % v(~inmask) = nan;
+        % % h = trisurf(dt.ConnectivityList,x,y,zeros(length(v),1),v);
+        % h = trisurf(K,x,y,zeros(length(v),1),v);
+        % h.FaceColor = 'interp';
+        % % h.EdgeColor = 'none';
+        % view(2)
+        % colorbar
+        hold on
+        % plot(shp);
+    otherwise
+%         scatter(x,y,36,v,'filled');
+        scatter(x,y,36,[0,0,0],'x');
+        c = colorbar;
+end
 
-    
+% c.Ticks = [linspace(round(min(v)),round(max(v)),10),0];
+
+% plot(xg(1,:),vg(300,:));
+
+caxis([round(min(vg(300,:))) round(max(vg(300,:)))])
+
+% A = min(vg(300,:));
+% B = min(v);
+
 % end
 % RPTRead('C:\Users\rober\Documents\GitHub\Meso-scale-Cantilevers-Abaqus-Automation\Example Rpt files\Direct_Dynamicstress-dist.rpt');
 %%
