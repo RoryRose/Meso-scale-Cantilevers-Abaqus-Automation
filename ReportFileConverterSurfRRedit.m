@@ -142,22 +142,28 @@ caxis([round(min(vg(300,:))) round(max(vg(300,:)))])
 
 % end
 % RPTRead('C:\Users\rober\Documents\GitHub\Meso-scale-Cantilevers-Abaqus-Automation\Example Rpt files\Direct_Dynamicstress-dist.rpt');
-%% creating histogram
+%% Find angle of beam
+ACOOR1 = MissingData(:,3)+MissingData(:,14); %deformed coordinate x1
+ACOOR2 = MissingData(:,4)+MissingData(:,15);%deformed coordinate x2
+ACOOR3 = MissingData(:,5) + MissingData(:,16);%deformed coordinate x3
+Angle = atan((ACOOR3(2,1)-ACOOR3(1,1))/(ACOOR1(2,1)-ACOOR1(1,1)))*180/pi%angle in degrees
+grad = (ACOOR3(2,1)-ACOOR3(1,1))/(ACOOR1(2,1)-ACOOR1(1,1))%angle in degrees
+%% creating histogram of stres
 Grid_Area = (max(x)-min(x))*(max(y)-min(y))/(A^2);
 countvals = nnz(~isnan(xg));
-totalArea = countvals*Grid_Area
-[N,edges] = histcounts(vg, 'Normalization', 'probability');
+idx = ~isnan(vg);
+totalArea = countvals*Grid_Area;
+[N,edges] = histcounts(vg(idx)./grad, 'Normalization', 'probability');
 xbar = edges(1:numel(N)) + mean(diff(edges))/2;
 figure
 bar(xbar, N)
 grid
 yt = get(gca, 'YTick'); 
 ytix = linspace(min(yt), max(yt), 10);
-set(gca, 'YTick',ytix, 'YTickLabel',fix(ytix*totalArea/max(yt)))
-ytickformat('%.3f')
-xlabel('Stress(Pa)')
-ylabel('Area (m^2)')
-% stresses = zeros
+%set(gca, 'YTick',ytix, 'YTickLabel',fix(ytix*totalArea/max(yt)))
+ytickformat('%.2f')
+xlabel('Stress/angle(Pa/gradient)')
+ylabel('Fraction of Area')
 %%
 function LinesString = py2string(filename,permission)
     % Helped by the following URLs:
