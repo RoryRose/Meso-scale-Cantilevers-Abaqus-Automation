@@ -1,14 +1,16 @@
 %% ParametricCSVGenerator
 
-function ParametricCSVGenerator(NumCores)
+function WorkingDirectory_actual = ParametricCSVGenerator(NumCores)
 %%
     question = 'Perform parametric analysis?';
     Quest_PA = questdlg(question,'MSCAA_main: Parametric Analysis','Yes','No','No');
     clear question
 
     % Need to make it load a .txt template file to use!
-    % uigetfile
-    Lines_1 = py2string('Variable-List-txt.txt','r');
+    filter = {'*.txt;*.py','Valid Template File Type (*.txt, *.py)'};
+    [file_name,file_path] = uigetfile(filter,'Select variable template file to import:','MultiSelect','off');
+    file_fullfile = fullfile(file_path,file_name);
+    Lines_1 = py2string(file_fullfile,'r');
     [array_var,array_val] = VarReader(Lines_1);
     
     message0 = sprintf('Use X number of CPUs out of %d?',NumCores);
@@ -23,7 +25,7 @@ function ParametricCSVGenerator(NumCores)
     ModelNameRow = strcmp(array_var,'ModelName');
     ModelName = array_val(ModelNameRow);
     
-    WorkingDirectory_actual = uigetdir();
+    WorkingDirectory_actual = uigetdir('','Choose the folder that will be the working directory for ABAQUS');
     AbqFDir = sprintf('r"%s"',WorkingDirectory_actual);
 %     AbqFDir = join(["'",AbqFDir,"'"],'');
     ODBName = string(replace(WorkingDirectory_actual,"\","/"));
@@ -73,7 +75,7 @@ function ParametricCSVGenerator(NumCores)
     
     Lines_1_table = table(Lines_1_alt);
     
-    SaveName = 'VariablesCSVMatlab';
+    SaveName = 'VariablesCSV';
     SaveFileName = sprintf('%s.csv',SaveName);
     writetable(Lines_1_table, SaveFileName,'WriteVariableNames',0,'WriteRowNames',0,'QuoteStrings',0);
 end

@@ -12,6 +12,8 @@ CodeWD = cd;
 
 fprintf('Running %s\n%s\n\n',mfilename,'Made by Robert J Scales & Rory Rose');
 
+pause(1);
+
 if ispc || isunix
     % Code to run on Windows platform or Code to run on Linux platform
     fprintf('%s is running on a compatible OS...\n\n',mfilename);
@@ -50,11 +52,11 @@ switch Quest_GUI
         GUI_ON = 'noGUI';
 end
 
-question = 'Display results in ABAQUS whilst generating model?';
+question = 'Have log file whilst generating model?';
 Quest_Int = questdlg(question,'MSCAA_main: Interactive ON/OFF','Yes','No','No');
 clear question
 
-if scrmp(Quest_Int,'Yes') == true
+if strcmp(Quest_Int,'Yes') == true
     IntactiveVal = 'interactive';
 else
     IntactiveVal = '';
@@ -63,15 +65,20 @@ end
 fprintf('%s: Completed Settings section\n%s\n',mfilename,DashLine);
 
 %% Main Bulk
-fprintf('%s: Started PythonScriptCombiner section\n\n',mfilename);
+fprintf('%s: Started Main Section\n\n',mfilename);
 
-ParametricCSVGenerator(NumCores)
+WorkingDirectory_actual = ParametricCSVGenerator(NumCores);
 
-% Dir_work_ABAQUS = uigetdir(CodeWD,'Select the working directory for ABAQUS');
+filter = {'*.py','Valid Method File Type (*.py)'};
+[method_name,method_path] = uigetfile(filter,'Select method python script to run:','MultiSelect','off');
+method_fullfile = fullfile(method_path,method_name);
 
-%% Running of python script
+editedMethodFullFile = MSCAA_method_editor(method_fullfile,WorkingDirectory_actual);
 
-% insert system command over here
+cmd2run = sprintf('abaqus cae %s=%s %s',GUI_ON,editedMethodFullFile,IntactiveVal);
+
+system(cmd2run); % System works on both Unix and Windows supposedly.
+% e.g. dos('abaqus cae script=Z:\RobScales\GitHub\Meso-scale-Cantilevers-Abaqus-Automation-Dev\Test_Frankens\Franken_Calib_Static.py');
 
 
 fprintf('%s: Completed!!\n',mfilename);
