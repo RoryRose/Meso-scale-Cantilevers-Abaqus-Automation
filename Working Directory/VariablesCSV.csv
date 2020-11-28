@@ -1,0 +1,35 @@
+d1,0.0001,0.0002,0.0003,0.0004
+d2,6.00E-04,6.00E-04,6.00E-04,6.00E-04
+d3,6.00E-04,6.00E-04,6.00E-04,6.00E-04
+d4,4.00E-04,4.00E-04,4.00E-04,4.00E-04
+h1,2.00E-04,2.00E-04,2.00E-04,2.00E-04
+h2,1.00E-03,1.00E-03,1.00E-03,1.00E-03
+r1,9.00E-04,9.00E-04,9.00E-04,9.00E-04
+r2,2.00E-03,2.00E-03,2.00E-03,2.00E-03
+t,1.25E-04,1.25E-04,1.25E-04,1.25E-04
+E,2.00E+11,2.00E+11,2.00E+11,2.00E+11
+dens,8000,8000,8000,8000
+PRat,0.29,0.29,0.29,0.29
+EncName,'encastre','encastre','encastre','encastre'
+TopSetName,'Cant_top_set','Cant_top_set','Cant_top_set','Cant_top_set'
+CentFreeName,'center_of_free_end','center_of_free_end','center_of_free_end','center_of_free_end'
+WholePrt,'Whole-Part','Whole-Part','Whole-Part','Whole-Part'
+MeshSeedSize,2.00E-05,2.00E-05,2.00E-05,2.00E-05
+SName,'nanoindenter','nanoindenter','nanoindenter','nanoindenter'
+ForceName,'nanoindent','nanoindent','nanoindent','nanoindent'
+JobName,'nanoindent_1','nanoindent_2','nanoindent_3','nanoindent_4'
+IndentLocName,'nanoindenter','nanoindenter','nanoindenter','nanoindenter'
+ModelName,'Model-1_1','Model-1_2','Model-1_3','Model-1_4'
+PrtName,'Part-1','Part-1','Part-1','Part-1'
+InstName,'Inst-1','Inst-1','Inst-1','Inst-1'
+NumCPUs,3,3,3,3
+AbqFDir,"r""C:\Users\rober\Documents\GitHub\Meso-scale-Cantilevers-Abaqus-Automation\Working Directory""","r""C:\Users\rober\Documents\GitHub\Meso-scale-Cantilevers-Abaqus-Automation\Working Directory""","r""C:\Users\rober\Documents\GitHub\Meso-scale-Cantilevers-Abaqus-Automation\Working Directory""","r""C:\Users\rober\Documents\GitHub\Meso-scale-Cantilevers-Abaqus-Automation\Working Directory"""
+ODBName,'C:/Users/rober/Documents/GitHub/Meso-scale-Cantilevers-Abaqus-Automation/Working Directory/','C:/Users/rober/Documents/GitHub/Meso-scale-Cantilevers-Abaqus-Automation/Working Directory/','C:/Users/rober/Documents/GitHub/Meso-scale-Cantilevers-Abaqus-Automation/Working Directory/','C:/Users/rober/Documents/GitHub/Meso-scale-Cantilevers-Abaqus-Automation/Working Directory/'
+RPTName,'calib_static','calib_static','calib_static','calib_static'
+MinFreq,19000,19000,19000,19000
+MaxFreq,20000,20000,20000,20000
+VertDisp,1.00E-05,1.00E-05,1.00E-05,1.00E-05
+SName2,'disk','disk','disk','disk'
+SName3,'end','end','end','end'
+DiskFreeName,'near_disk','near_disk','near_disk','near_disk'
+EndFreeName,'near_end','near_end','near_end','near_end'
