@@ -3,7 +3,6 @@
 from abaqus import *
 from abaqusConstants import *
 import __main__
-#set names
 import section
 import regionToolset
 import displayGroupMdbToolset as dgm
@@ -23,20 +22,18 @@ import displayGroupOdbToolset as dgo
 import connectorBehavior
 import csv
 import time
-# from datetime import datetime
-
-# from matplotlib import pyplot as plt
 #set working directory#
 AbqFDir = r"C:\Users\trin3150\Documents\Abaqus\liltemp" #directory location for abaqus to use (best if local)
 os.chdir(AbqFDir)
 filename = 'VariablesCSVThickCalib2.csv' #must be placed into the working directory of abaqus (AbqFDir)
+#read the variables csv file#
 with open(filename) as f:
     reader = csv.reader(f)
     header_row = next(reader)
     NumOfColumns = len(header_row)
     NumOfTests = int(NumOfColumns-1)
     # print(NumOfTests)
-
+#create variables from the csv file#
 for i in range(1,NumOfTests+1):
     print("\nData column = %d" % i)
     with open(filename) as f:
@@ -67,13 +64,14 @@ for i in range(1,NumOfTests+1):
             else:
                 exec("%s = %s" % (current_var,''))
     #initialise session#
+    #new model created for each variable set in the csv file#
     mdb.Model(name=ModelName, modelType=STANDARD_EXPLICIT)
     session.viewports['Viewport: 1'].setValues(displayedObject=None)
     s = mdb.models[ModelName].ConstrainedSketch(name=ModelName, sheetSize=0.006)
     g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
     s.sketchOptions.setValues(decimalPlaces=4)
     s.setPrimaryObject(option=STANDALONE)
-    #create sketch#
+    #create constrained sketch starting from lines then adding dimensions and lines#
     s.ConstructionLine(point1=(-0.000275, 0.0), point2=(0.0, 0.0))
     s.HorizontalConstraint(entity=g[2], addUndoState=False)
     s.Line(point1=(0.001, 0.0), point2=(0.001, 0.000500000040978193))
@@ -140,12 +138,14 @@ for i in range(1,NumOfTests+1):
     p = mdb.models[ModelName].parts[PrtName]
     session.viewports['Viewport: 1'].setValues(displayedObject=p)
     del mdb.models[ModelName].sketches[ModelName]
-    #assign material#
+    #create the material from the imputted variable parameters#
     mdb.models[ModelName].Material(name='Material-1')
     mdb.models[ModelName].materials['Material-1'].Density(table=((dens, ), ))
     mdb.models[ModelName].materials['Material-1'].Elastic(table=((E, 
         PRat), ))    
-    #create partitions#
+    #create partitions for defining the nodal sets later to allow them to be defined by geometry rather than node number#
+    #one partition along the beam and 5 accross the cantilever#
+    #partitions defined by point and normal or extending face to make sure no nodes referenced explicitly#
     p1 = mdb.models[ModelName].parts[PrtName]
     session.viewports['Viewport: 1'].setValues(displayedObject=p1)
     p = mdb.models[ModelName].parts[PrtName]
@@ -188,22 +188,20 @@ for i in range(1,NumOfTests+1):
     pickedCells = c.getSequenceFromMask(mask=('[#b8a ]', ), )
     f1 = p.faces
     p.PartitionCellByExtendFace(extendFace=f1[55], cells=pickedCells)    
-    #section part#
-    mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
-        material='Material-1', thickness=None)
-    del mdb.models[ModelName].sections['Section-1']
+    #section whole part to be material 1#
     mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
         material='Material-1', thickness=None)
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(
         optimizationTasks=OFF, geometricRestrictions=OFF, stopConditions=OFF)
-    #create assembly#
+    #create assembly from the part#
     a = mdb.models[ModelName].rootAssembly
     a.DatumCsysByDefault(CARTESIAN)
     p = mdb.models[ModelName].parts[PrtName]
     a.Instance(name=InstName, part=p, dependent=ON)
     #create useful sets#
+    #sets created for: BC set on edge of disk, center of free end, top surface of the cantilever, whole part, sets for measuring angle#
     p1 = mdb.models[ModelName].parts[PrtName]
     session.viewports['Viewport: 1'].setValues(displayedObject=p1)
     p = mdb.models[ModelName].rootAssembly
@@ -230,15 +228,15 @@ for i in range(1,NumOfTests+1):
     p.Set(cells=cells, name='undeformable')
     cells = c.getSequenceFromMask(mask=('[#207f ]', ), )
     p.Set(cells=cells, name='deformable')
-#=============================================================================
-    #create undeformable material#
+    #create undeformable material for the end of the free end to stop local deformation in the free end from altering the measured displacments#
+    #modulus of new material is 2e+15, poisson's ratio and modulus are kept constant#
     mdb.models[ModelName].Material(name='Material-2')
     mdb.models[ModelName].materials['Material-2'].Density(table=((dens, ), ))
     mdb.models[ModelName].materials['Material-2'].Elastic(table=((2e+15, PRat), ))
-    #create new material#
+    #create new section from the new material#
     mdb.models[ModelName].HomogeneousSolidSection(name='Section-2', 
         material='Material-2', thickness=None)
-    #create new section assignment#
+    #create new section assignment to section the material between the two materials we have#
     p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
     cells = c.getSequenceFromMask(mask=('[#1f80 ]', ), )
@@ -255,7 +253,9 @@ for i in range(1,NumOfTests+1):
     p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
         offsetType=MIDDLE_SURFACE, offsetField='', 
         thicknessAssignment=FROM_SECTION)
-    #generate new mesh#
+    #generate mesh#
+    #medial axis algorithm used to stop mesh errors when doing parametric analysis at the expense of computing time#
+    #elements changed to be C3D20R#
     p = mdb.models[ModelName].parts[PrtName]
     p.seedPart(size=MeshSeedSize, deviationFactor=0.1, minSizeFactor=0.1)
     c = p.cells
@@ -270,29 +270,23 @@ for i in range(1,NumOfTests+1):
     pickedRegions =(cells, )
     p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
         elemType3))
-    #create steps#
+    #create static step#
     a = mdb.models[ModelName].rootAssembly
     a.regenerate()
-    session.viewports['Viewport: 1'].setValues(displayedObject=a)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(
-        adaptiveMeshConstraints=ON)
-    session.viewports['Viewport: 1'].view.setValues(nearPlane=0.00469895, 
-        farPlane=0.00712223, width=0.00188493, height=0.000775242, 
-        viewOffsetX=0.000207475, viewOffsetY=-0.000125154)
     mdb.models[ModelName].StaticStep(name=SName, previous='Initial')
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
     #regenerate part#
     a.regenerate()
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
-    #delete auto requests#
+    #delete auto requests to not clutter the rpt file#
     del mdb.models[ModelName].historyOutputRequests['H-Output-1']
     del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
-    #create field output request#
+    #create field output request for the displacment of the center node of the free end used to measure deflection response#
     regionDef=mdb.models[ModelName].rootAssembly.sets[CentFreeName]
     mdb.models[ModelName].FieldOutputRequest(name='F-Output-1', 
         createStepName='nanoindenter', variables=('U', ), region=regionDef, 
         sectionPoints=DEFAULT, rebar=EXCLUDE)
-    #create forces#
+    #create local force on the center of the free end with value of 1N#
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
     a = mdb.models[ModelName].rootAssembly
     region = a.sets[CentFreeName]
@@ -301,6 +295,7 @@ for i in range(1,NumOfTests+1):
         localCsys=None)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
     #create BCs#
+    #encaster the edje of the disk#
     a = mdb.models[ModelName].rootAssembly
     region = a.sets[EncName]
     mdb.models[ModelName].EncastreBC(name='BC-2', createStepName=SName, 
@@ -321,8 +316,7 @@ for i in range(1,NumOfTests+1):
     mdb.jobs[JobName].submit(consistencyChecking=OFF)#mdb.jobs['Job'+str(d[i])].submit(consistencyChecking=OFF)
     #wait for job to finish#
     mdb.jobs[JobName].waitForCompletion()#mdb.jobs['Job'+str(d[i])].waitForCompletion()
-    
-    #create xy data#
+    #create report file with the contents of the field output request for the displacment#
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
     session.mdbData.summary()
@@ -330,10 +324,9 @@ for i in range(1,NumOfTests+1):
         name=ODBName+JobName+'.odb')
     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
     odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
-    
-    #create output .rpt file#
     session.writeFieldReport(fileName='rpt_std_static_'+JobName+'.rpt', append=OFF, 
         sortItem='Node Label', odb=odb, step=0, frame=1, outputPosition=NODAL, 
         variable=(('U', NODAL, ((COMPONENT, 'U3'), )), ))
+    #sleep for 2s to allow some time to prevent crashes#
     time.sleep(2)
 

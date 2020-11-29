@@ -3,7 +3,6 @@
 from abaqus import *
 from abaqusConstants import *
 import __main__
-#set names
 import section
 import regionToolset
 import displayGroupMdbToolset as dgm
@@ -23,20 +22,18 @@ import displayGroupOdbToolset as dgo
 import connectorBehavior
 import csv
 import time
-# from datetime import datetime
-
-# from matplotlib import pyplot as plt
 #set working directory#
 AbqFDir = r"C:\Users\trin3150\Documents\Abaqus\liltemp" #directory location for abaqus to use (best if local)
 os.chdir(AbqFDir)
 filename = 'VariablesCSV.csv' #must be placed into the working directory of abaqus (AbqFDir)
+#read the variables csv file#
 with open(filename) as f:
     reader = csv.reader(f)
     header_row = next(reader)
     NumOfColumns = len(header_row)
     NumOfTests = int(NumOfColumns-1)
     # print(NumOfTests)
-
+#create variables from the csv file#
 for i in range(1,NumOfTests+1):
     print("\nData column = %d" % i)
     with open(filename) as f:
@@ -66,14 +63,15 @@ for i in range(1,NumOfTests+1):
                     exec("%s = %s" % (current_var,''))
             else:
                 exec("%s = %s" % (current_var,''))
-    #initialise session#
+    #initialise session - create new model and sketch#
+    #new model created for each variable set in the csv file#
     mdb.Model(name=ModelName, modelType=STANDARD_EXPLICIT)
     session.viewports['Viewport: 1'].setValues(displayedObject=None)
     s = mdb.models[ModelName].ConstrainedSketch(name=ModelName, sheetSize=0.006)
     g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
     s.sketchOptions.setValues(decimalPlaces=4)
     s.setPrimaryObject(option=STANDALONE)
-    #create sketch#
+    #create constrained sketch starting from lines then adding dimensions and lines#
     s.ConstructionLine(point1=(-0.000275, 0.0), point2=(0.0, 0.0))
     s.HorizontalConstraint(entity=g[2], addUndoState=False)
     s.Line(point1=(0.001, 0.0), point2=(0.001, 0.000500000040978193))
@@ -130,7 +128,7 @@ for i in range(1,NumOfTests+1):
     s.RadialDimension(curve=g[15], textPoint=(-0.000789811310824007, 
         0.000176487024873495), radius=r2)
     s.CoincidentConstraint(entity1=v[18], entity2=g[2])
-    #extrude sketch#
+    #extrude sketch to create part#
     p = mdb.models[ModelName].Part(name=PrtName, dimensionality=THREE_D, 
         type=DEFORMABLE_BODY)
     p = mdb.models[ModelName].parts[PrtName]
@@ -140,12 +138,14 @@ for i in range(1,NumOfTests+1):
     p = mdb.models[ModelName].parts[PrtName]
     session.viewports['Viewport: 1'].setValues(displayedObject=p)
     del mdb.models[ModelName].sketches[ModelName]
-    #assign material#
+    #create the material from the imputted variable parameters#
     mdb.models[ModelName].Material(name='Material-1')
     mdb.models[ModelName].materials['Material-1'].Density(table=((dens, ), ))
     mdb.models[ModelName].materials['Material-1'].Elastic(table=((E, 
         PRat), ))    
-    #create partitions#
+    #create partitions for defining the nodal sets later to allow them to be defined by geometry rather than node number#
+    #one partition along the beam and 5 accross the cantilever#
+    #partitions defined by point and normal or extending face to make sure no nodes referenced explicitly#
     p1 = mdb.models[ModelName].parts[PrtName]
     session.viewports['Viewport: 1'].setValues(displayedObject=p1)
     p = mdb.models[ModelName].parts[PrtName]
@@ -188,22 +188,20 @@ for i in range(1,NumOfTests+1):
     pickedCells = c.getSequenceFromMask(mask=('[#b8a ]', ), )
     f1 = p.faces
     p.PartitionCellByExtendFace(extendFace=f1[55], cells=pickedCells)    
-    #section part#
-    mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
-        material='Material-1', thickness=None)
-    del mdb.models[ModelName].sections['Section-1']
+    #section whole part to be material 1#
     mdb.models[ModelName].HomogeneousSolidSection(name='Section-1', 
         material='Material-1', thickness=None)
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(
         optimizationTasks=OFF, geometricRestrictions=OFF, stopConditions=OFF)
-    #create assembly#
+    #create assembly from the part#
     a = mdb.models[ModelName].rootAssembly
     a.DatumCsysByDefault(CARTESIAN)
     p = mdb.models[ModelName].parts[PrtName]
     a.Instance(name=InstName, part=p, dependent=ON)
     #create useful sets#
+    #sets created for: BC set on edge of disk, center of free end, top surface of the cantilever, whole part, sets for measuring angle#
     p1 = mdb.models[ModelName].parts[PrtName]
     session.viewports['Viewport: 1'].setValues(displayedObject=p1)
     p = mdb.models[ModelName].rootAssembly
@@ -225,12 +223,6 @@ for i in range(1,NumOfTests+1):
     v = p.instances[InstName].vertices
     verts = v.getSequenceFromMask(mask=('[#200 ]', ), )
     p.Set(vertices=verts, name=DiskFreeName)
-    c = p.instances[InstName].cells
-    cells = c.getSequenceFromMask(mask=('[#1f80 ]', ), )
-    p.Set(cells=cells, name='undeformable')
-    cells = c.getSequenceFromMask(mask=('[#207f ]', ), )
-    p.Set(cells=cells, name='deformable')
-#=============================================================================
     #section part#
     p = mdb.models[ModelName].parts[PrtName]
     c = p.cells
@@ -240,7 +232,9 @@ for i in range(1,NumOfTests+1):
     p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, 
         offsetType=MIDDLE_SURFACE, offsetField='', 
         thicknessAssignment=FROM_SECTION)
-    #generate new mesh#
+    #generate mesh#
+    #medial axis algorithm used to stop mesh errors when doing parametric analysis at the expense of computing time#
+    #elements changed to be C3D20R#
     p = mdb.models[ModelName].parts[PrtName]
     p.seedPart(size=MeshSeedSize, deviationFactor=0.1, minSizeFactor=0.1)
     c = p.cells
@@ -255,13 +249,14 @@ for i in range(1,NumOfTests+1):
     pickedRegions =(cells, )
     p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
         elemType3))
-    #create step#
+    #create direct dynamic step#
     mdb.models[ModelName].SteadyStateDirectStep(name=SName, previous='Initial', 
         frequencyRange=((MinFreq, MaxFreq, 2, 1.0), ))
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
     #delete automatic history output request#
     del mdb.models[ModelName].historyOutputRequests['H-Output-1']
-    #create field output requests#
+    #create field output requests for stresses and positions on the top of the cantilever#
+    #and coordinate and position of points in the free end to measure deflection angle#
     regionDef=mdb.models[ModelName].rootAssembly.sets[TopSetName]
     mdb.models[ModelName].fieldOutputRequests['F-Output-1'].setValues(variables=(
         'S', 'LE', 'U', 'V', 'A','COORD'), region=regionDef, sectionPoints=DEFAULT, 
@@ -275,6 +270,7 @@ for i in range(1,NumOfTests+1):
         createStepName=SName, variables=('UT', 'COORD', ), 
         region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
     #create BCs#
+    #encaster the edje of the disk, create displacment of the disk along z axis by VertDisp#
     a = mdb.models[ModelName].rootAssembly
     region = a.sets[EncName]
     mdb.models[ModelName].DisplacementBC(name='BC-1', createStepName=SName, 
@@ -299,10 +295,9 @@ for i in range(1,NumOfTests+1):
     mdb.jobs[JobName].writeInput(consistencyChecking=OFF)
     #run job#
     mdb.jobs[JobName].submit(consistencyChecking=OFF)
-    #wait for job to finish#
+    #wait for job to finish before continuing#
     mdb.jobs[JobName].waitForCompletion()
-    
-    #create xy data#
+    #create report file with the stressses, displacments and coordinates given by the field outputs#
     a = mdb.models[ModelName].rootAssembly
     session.viewports['Viewport: 1'].setValues(displayedObject=a)
     session.mdbData.summary()
@@ -316,5 +311,5 @@ for i in range(1,NumOfTests+1):
         'Mises'), (COMPONENT, 'S11'), (COMPONENT, 'S22'), (COMPONENT, 'S33'), (
         COMPONENT, 'S12'), (COMPONENT, 'S13'), (COMPONENT, 'S23'), )), ('UT', NODAL)), 
         numericForm=REAL)
+    #sleep for 2s to allow some time to prevent crashes#
     time.sleep(2)
-
