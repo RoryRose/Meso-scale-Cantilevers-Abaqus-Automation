@@ -268,11 +268,11 @@ for i in range(1,NumOfTests+1):
         rebar=EXCLUDE)
     regionDef=mdb.models[ModelName].rootAssembly.sets[DiskFreeName]
     mdb.models[ModelName].FieldOutputRequest(name='Disk_end_coord', 
-        createStepName=SName, variables=('COORD', ), 
+        createStepName=SName, variables=('UT', 'COORD', ), 
         region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
     regionDef=mdb.models[ModelName].rootAssembly.sets[EndFreeName]
     mdb.models[ModelName].FieldOutputRequest(name='free_end_coord', 
-        createStepName=SName, variables=('COORD', ), 
+        createStepName=SName, variables=('UT', 'COORD', ), 
         region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
     #create BCs#
     a = mdb.models[ModelName].rootAssembly
@@ -314,7 +314,7 @@ for i in range(1,NumOfTests+1):
         sortItem='Node Label', odb=odb, step=0, frame=2, outputPosition=NODAL, 
         variable=(('COORD', NODAL), ('S', INTEGRATION_POINT, ((INVARIANT, 
         'Mises'), (COMPONENT, 'S11'), (COMPONENT, 'S22'), (COMPONENT, 'S33'), (
-        COMPONENT, 'S12'), (COMPONENT, 'S13'), (COMPONENT, 'S23'), )), ), 
+        COMPONENT, 'S12'), (COMPONENT, 'S13'), (COMPONENT, 'S23'), )), ('UT', NODAL)), 
         numericForm=REAL)
     time.sleep(2)
 

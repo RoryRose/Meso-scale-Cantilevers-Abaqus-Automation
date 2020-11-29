@@ -29,7 +29,7 @@ import time
 #set working directory#
 AbqFDir = r"C:\Users\trin3150\Documents\Abaqus\liltemp" #directory location for abaqus to use (best if local)
 os.chdir(AbqFDir)
-filename = 'VariablesCSV.csv' #must be placed into the working directory of abaqus (AbqFDir)
+filename = 'VariablesCSVThickCalib2.csv' #must be placed into the working directory of abaqus (AbqFDir)
 with open(filename) as f:
     reader = csv.reader(f)
     header_row = next(reader)

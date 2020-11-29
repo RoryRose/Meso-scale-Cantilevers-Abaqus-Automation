@@ -323,16 +323,6 @@ for i in range(1,NumOfTests):
     mdb.models[ModelName].StaticStep(name=SName, previous=SName2)
     session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName)
     mdb.models[ModelName].StaticStep(name=SName3, previous=SName)
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName3)
-    ##delete automatically created output requests#
-    #del mdb.models[ModelName].fieldOutputRequests['F-Output-1']
-    #del mdb.models[ModelName].historyOutputRequests['H-Output-1']
-    session.viewports['Viewport: 1'].assemblyDisplay.setValues(step=SName2)
-    session.viewports['Viewport: 1'].partDisplay.setValues(mesh=OFF)
-    session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
-        meshTechnique=OFF)
-    session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
-        referenceRepresentation=ON)
     p1 = mdb.models[ModelName].parts[PrtName]
     session.viewports['Viewport: 1'].setValues(displayedObject=p1)
     #create sets#

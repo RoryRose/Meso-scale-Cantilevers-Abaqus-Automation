@@ -230,7 +230,7 @@ for i in range(1,NumOfTests+1):
     p.Set(cells=cells, name='undeformable')
     cells = c.getSequenceFromMask(mask=('[#207f ]', ), )
     p.Set(cells=cells, name='deformable')
-#=============================================================================
+    #=============================================================================
     #create undeformable material#
     mdb.models[ModelName].Material(name='Material-2')
     mdb.models[ModelName].materials['Material-2'].Density(table=((dens, ), ))
@@ -265,7 +265,7 @@ for i in range(1,NumOfTests+1):
     elemType1 = mesh.ElemType(elemCode=C3D20R, elemLibrary=STANDARD)
     elemType2 = mesh.ElemType(elemCode=C3D15, elemLibrary=STANDARD)
     elemType3 = mesh.ElemType(elemCode=C3D10, elemLibrary=STANDARD)
-
+    
     cells = c.getSequenceFromMask(mask=('[#3fff ]', ), )
     pickedRegions =(cells, )
     p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
