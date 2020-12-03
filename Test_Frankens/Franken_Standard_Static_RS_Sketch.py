@@ -40,12 +40,9 @@ for i in range(1,NumOfTests+1):
         reader = csv.reader(f)
         variables, values = [], []
         for row in reader:
-            # print(row)
-            
             current_var = row[0]
             print(current_var)
-            # variables.append(current_var)
-            
+
             test_val = row[i]
             print(test_val)
             if len(test_val) > 0:
