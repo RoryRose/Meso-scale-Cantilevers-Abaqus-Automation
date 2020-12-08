@@ -160,7 +160,7 @@ for FileNum = 1:length(file)
     ACOOR2 = MissingData(:,4)+MissingData(:,15);%deformed coordinate x2
     ACOOR3 = MissingData(:,5) + MissingData(:,16);%deformed coordinate x3
     Angle = atan((ACOOR3(2,1)-ACOOR3(1,1))/(ACOOR1(2,1)-ACOOR1(1,1)));% *180/pi%angle in degrees
-    grad = (ACOOR3(2,1)-ACOOR3(1,1))/(ACOOR1(2,1)-ACOOR1(1,1))%angle in degrees
+    grad = (ACOOR3(2,1)-ACOOR3(1,1))/(ACOOR1(2,1)-ACOOR1(1,1));%angle in degrees
     %% creating histogram of stres
     Grid_Area = (max(x)-min(x))*(max(y)-min(y))/(A^2);
     countvals = nnz(~isnan(xg));
