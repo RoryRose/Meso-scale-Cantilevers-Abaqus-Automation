@@ -25,26 +25,26 @@ import time
 #set working directory#
 AbqFDir = r"C:\Users\trin3150\Documents\Abaqus\liltemp" #directory location for abaqus to use (best if local)
 os.chdir(AbqFDir)
-filename = 'VariablesCSVThickCalib2.csv' #must be placed into the working directory of abaqus (AbqFDir)
+filename = 'Standard-Static-thickness-var-Variables.csv' #must be placed into the working directory of abaqus (AbqFDir)
 #read the variables csv file#
 with open(filename) as f:
     reader = csv.reader(f)
     header_row = next(reader)
     NumOfColumns = len(header_row)
     NumOfTests = int(NumOfColumns-1)
-    # print(NumOfTests)
+    print(NumOfTests)
 #create variables from the csv file#
 for i in range(1,NumOfTests+1):
-    print("\nData column = %d" % i)
+    # print("\nData column = %d" % i)
     with open(filename) as f:
         reader = csv.reader(f)
         variables, values = [], []
         for row in reader:
             current_var = row[0]
-            print(current_var)
+            # print(current_var)
 
             test_val = row[i]
-            print(test_val)
+            # print(test_val)
             if len(test_val) > 0:
                 if isinstance(test_val, float):
                     current_value = float(test_val)
@@ -321,9 +321,9 @@ for i in range(1,NumOfTests+1):
         name=ODBName+JobName+'.odb')
     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
     odb = session.odbs[JobName+'.odb']#odb = session.odbs[ODBName+JobName+'.odb']
-    session.writeFieldReport(fileName='rpt_std_static_'+JobName+'.rpt', append=OFF, 
+    session.writeFieldReport(fileName='rpt_std_static_'+JobName+'-t-'+str(t)+'.rpt', append=OFF, 
         sortItem='Node Label', odb=odb, step=0, frame=1, outputPosition=NODAL, 
         variable=(('U', NODAL, ((COMPONENT, 'U3'), )), ))
     #sleep for 2s to allow some time to prevent crashes#
-    time.sleep(2)
+    time.sleep(0.5)
 
