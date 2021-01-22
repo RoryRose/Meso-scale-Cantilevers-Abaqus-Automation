@@ -2,11 +2,11 @@
 % function outputmatrix = ReportFileConverterSurf
 
 %% Settings
-clc
-clear
-close all
+% clc
+% clear
+% close all
 ScatterORInt = 'Int'; % 'Int'
-PlotTF = false;
+PlotTF = true;
 
 %% Reading Data
 [file, path] = uigetfile('Select the report file:','MultiSelect','on');
@@ -17,7 +17,7 @@ end
 
 outPutArray = nan(length(file),1);
 NameArray = transpose(string(file));
-
+figure
 for FileNum = 1:length(file)
 
     filename = fullfile(path,file{FileNum});
@@ -111,13 +111,16 @@ for FileNum = 1:length(file)
             % vg = F(xg,yg);
 
             if PlotTF == true
-                h = pcolor(xg,yg,vg);
+                subplot(4,length(file)/2,FileNum);
+                h = pcolor(xg,yg,vg);%pcolor(xg,yg,vg);
+                colormap jet
                 h.EdgeColor = 'none';
-                c = colorbar;
+                %c = colorbar;
                 xlimvec = [min(xg(inmask)),max(xg(inmask))];
                 ylimvec = [min(yg(inmask)),max(yg(inmask))];
                 xlim(xlimvec);
                 ylim(ylimvec);
+                title(strcat('seed size = ',extractBetween(file{FileNum},"A1-","-seedstress")));
             end
 
             % dt = delaunayTriangulation(x,y);
@@ -137,8 +140,10 @@ for FileNum = 1:length(file)
         otherwise
     %         scatter(x,y,36,v,'filled');
             if PlotTF == true
+                subplot(2,length(file),FileNum+length(file));
                 scatter(x,y,36,[0,0,0],'x');
-                c = colorbar;
+                %c = colorbar;
+                title(strcat('seed size = ',extractBetween(file{FileNum},"A1-","-seedstress")));
             end
     end
 
@@ -147,7 +152,7 @@ for FileNum = 1:length(file)
 
         % plot(xg(1,:),vg(300,:));
 
-        caxis([round(min(vg(300,:))) round(max(vg(300,:)))])
+        caxis([round(min(vg(300,:))) round(min(vg(300,:))+1e8)])
 
         % A = min(vg(300,:));
         % B = min(v);
@@ -159,34 +164,57 @@ for FileNum = 1:length(file)
     ACOOR1 = MissingData(:,3)+MissingData(:,14); %deformed coordinate x1
     ACOOR2 = MissingData(:,4)+MissingData(:,15);%deformed coordinate x2
     ACOOR3 = MissingData(:,5) + MissingData(:,16);%deformed coordinate x3
-    Angle = atan((ACOOR3(2,1)-ACOOR3(1,1))/(ACOOR1(2,1)-ACOOR1(1,1)));% *180/pi%angle in degrees
+    Angle = atan((ACOOR3(2,1)-ACOOR3(1,1))/(ACOOR1(2,1)-ACOOR1(1,1)));%angle in radian *180/pi%angle in degrees
     grad = (ACOOR3(2,1)-ACOOR3(1,1))/(ACOOR1(2,1)-ACOOR1(1,1));%angle in degrees
     %% creating histogram of stres
     Grid_Area = (max(x)-min(x))*(max(y)-min(y))/(A^2);
     countvals = nnz(~isnan(xg));
     idx = ~isnan(vg);
     totalArea = countvals*Grid_Area;
-    [N,edges] = histcounts(vg(idx)./Angle, 'Normalization', 'probability');
+    [N,edges] = histcounts(vg(idx), 'Normalization', 'probability');%histcounts(vg(idx)./Angle, 'Normalization', 'probability');
     xbar = edges(1:numel(N)) + mean(diff(edges))/2;
-    figure
+    subplot(2,length(file),FileNum+length(file));
     bar(xbar, N)
     grid
     yt = get(gca, 'YTick'); 
     ytix = linspace(min(yt), max(yt), 10);
     %set(gca, 'YTick',ytix, 'YTickLabel',fix(ytix*totalArea/max(yt)))
     ytickformat('%.2f')
-    xlabel('Stress/angle(Pa/Rad)')
+    xlabel('Stress/angle(Pa)')
     ylabel('Fraction of Area')
-
+    title(strcat('seed size = ',extractBetween(file{FileNum},"A1-","-seedstress")));
     [maxValue,maxIndex] = max(N);
     maxPaPerRad = abs(mean([edges(maxIndex),edges(maxIndex+1)]));
     outPutArray(FileNum) = maxPaPerRad;
-    pause(3);
-    close all
+    %pause(3);
+    %close all
 end
-
 outPutTable = table(NameArray,outPutArray);
-
+for FileNum = 1:length(file)
+    seedstress(FileNum)=FileNum;
+end
+figure
+subplot(1,2,1);
+scatter(seedstress,outPutArray)
+hold on
+yline(mean(outPutArray),'b')
+xlabel('sample number')
+ylabel('stress/angle(Pa/Rad) of maximum area')
+xlim([0,length(file)+1]);
+hold off
+subplot(1,2,2);
+hist(outPutArray)
+xlabel('stress/angle(Pa/Rad) of maximum area');
+ylabel('counts');
+thickness = [];
+data2=readtable('C:\Users\User\OneDrive - Nexus365\Part II\Testing Protocol Group Project\Abaqus Results\Final Direct Dynamic\parameters.csv');
+for FileNum = 1:length(file)
+    thickness(FileNum) = str2double(cell2mat(extractBetween(file{FileNum},"t-",".rpt")));
+end
+figure
+scatter(data2.h1,outPutArray)
+data2.stressperangle=outPutArray;
+corrplot(data2)
 %%
 function LinesString = py2string(filename,permission)
     % Helped by the following URLs:
