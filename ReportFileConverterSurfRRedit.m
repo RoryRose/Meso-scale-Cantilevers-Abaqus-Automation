@@ -214,7 +214,7 @@ end
 figure
 scatter(data2.h1,outPutArray)
 data2.stressperangle=outPutArray;
-corrplot(data2)
+plotmatrix(data2)
 %%
 function LinesString = py2string(filename,permission)
     % Helped by the following URLs:
