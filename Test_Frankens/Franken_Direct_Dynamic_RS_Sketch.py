@@ -25,7 +25,7 @@ import time
 #set working directory#
 AbqFDir = r"C:\Users\trin3150\Documents\Abaqus\liltemp" #directory location for abaqus to use (best if local)
 os.chdir(AbqFDir)
-filename = 'VariablesCSV.csv' #must be placed into the working directory of abaqus (AbqFDir)
+filename = 'Direct-Variables.csv' #must be placed into the working directory of abaqus (AbqFDir)
 #read the variables csv file#
 with open(filename) as f:
     reader = csv.reader(f)
@@ -305,11 +305,11 @@ for i in range(1,NumOfTests+1):
         name=ODBName+JobName+'.odb')
     session.viewports['Viewport: 1'].setValues(displayedObject=o3)
     odb = session.odbs[JobName+'.odb']
-    session.writeFieldReport(fileName='rpt_direct_dynamic_'+JobName+'stress-dist-and-coord'+'.rpt', append=OFF, 
+    session.writeFieldReport(fileName='rpt_direct_dynamic_'+JobName+'-t-'+str(t)+'.rpt', append=OFF, 
         sortItem='Node Label', odb=odb, step=0, frame=2, outputPosition=NODAL, 
         variable=(('COORD', NODAL), ('S', INTEGRATION_POINT, ((INVARIANT, 
         'Mises'), (COMPONENT, 'S11'), (COMPONENT, 'S22'), (COMPONENT, 'S33'), (
         COMPONENT, 'S12'), (COMPONENT, 'S13'), (COMPONENT, 'S23'), )), ('UT', NODAL)), 
         numericForm=REAL)
-    #sleep for 2s to allow some time to prevent crashes#
-    time.sleep(2)
+    #sleep for 0.5s to allow some time to prevent crashes#
+    time.sleep(0.5)
