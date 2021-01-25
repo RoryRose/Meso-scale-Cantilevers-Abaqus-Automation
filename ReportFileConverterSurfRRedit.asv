@@ -180,7 +180,7 @@ hist(outPutArray)
 xlabel('stress/angle(Pa/Rad) of maximum area');
 ylabel('counts');
 thickness = [];
-data2=readtable('C:\Users\trin3150\Documents\Abaqus\liltemp\Final-Direct-Check.csv');
+data2=readtable('C:\Users\User\OneDrive - Nexus365\Part II\Testing Protocol Group Project\Abaqus Results\Final Direct Dynamic\parameters.csv');
 for FileNum = 1:length(file)
     thickness(FileNum) = str2double(cell2mat(extractBetween(file{FileNum},"t-",".rpt")));
 end
